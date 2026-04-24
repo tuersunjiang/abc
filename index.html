@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Insight 智能运维云平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 重置与基础样式 */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #0f172a;
+        }
+
+        /* 顶部导航栏样式 */
+        .one {
+            width: 100vw;
+            height: 100vh;
+            background-color: #0f172a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .two {
+            width: 100vw;
+            height: 50px;
+            background-color: #082f49;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .platform-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .platform-title i {
+            color: #06b6d4;
+            font-size: 1.3rem;
+        }
+
+        .user-widget {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .trigger-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 40px;
+            transition: background 0.2s;
+        }
+
+        .trigger-area:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .triangle-icon {
+            font-size: 0.9rem;
+            color: #06b6d4;
+            transition: transform 0.2s;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background-color: #1e293b;
+            min-width: 170px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 8px 0;
+            z-index: 100;
+            display: none;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        .dropdown-item i {
+            width: 18px;
+            color: #06b6d4;
+        }
+
+        .dropdown-item:hover {
+            background-color: #273449;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #334155;
+            margin: 6px 0;
+        }
+
+        /* 左侧导航与内容区域 */
+        .three {
+            width: 100vw;
+            flex: 1;
+            display: flex;
+            background-color: #0f172a;
+        }
+
+        .four {
+            width: 180px;
+            height: 100%;
+            background-color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 #334155;
+        }
+
+        .nav-item {
+            color: #e2e8f0;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .main-nav-item.active {
+            background-color: #082f49;
+            color: white;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .nav-item i {
+            width: 22px;
+            color: #06b6d4;
+        }
+
+        .nav-item:not(.active):hover {
+            background-color: #273449;
+            color: #edf5f2;
+        }
+
+        .sub-nav-container {
+            display: none;
+            flex-direction: column;
+            background-color: #102c2e;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .sub-nav-container.show {
+            display: flex;
+            max-height: 300px;
+        }
+
+        .sub-nav-item {
+            color: #b8d1cb;
+            padding: 12px 20px 12px 45px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sub-nav-item.active {
+            background-color: #082f49;
+            color: white;
+        }
+
+        .sub-nav-item:hover {
+            background-color: #18383a;
+            color: #edf5f2;
+        }
+
+        .six {
+            flex: 1;
+            height: 100%;
+            background-color: #0f172a;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #0f172a;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: #06b6d4;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: bold;
+        }
+
+        .sub-nav-icon {
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+
+        .main-nav-item.open .sub-nav-icon {
+            transform: rotate(180deg);
+        }
+
+        /* 首页内容样式 */
+        .page-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .da {
+            width: 1200px;
+            height: 680px;
+            display: flex;
+            gap: 10px;
+            margin: 20px auto;
+            background-color: #0f172a;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .box1 {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #img {
+            border-radius: 12px;
+        }
+
+        .a01 {
+            width: 100%;
+            height: 250px;
+            background-color: #1e293b;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+        }
+
+        .table-main-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .table-header {
+            display: flex;
+            border-bottom: 2px solid #06b6d4;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .table-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row:hover {
+            background-color: #273449;
+        }
+
+        .col {
+            flex: 1;
+            font-size: 15px;
+            color: #e2e8f0;
+        }
+
+        .col.name {
+            flex: 2;
+            text-align: left;
+        }
+
+        .col.score {
+            flex: 1;
+            text-align: center;
+        }
+
+        .col.rating {
+            flex: 1;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .score-num {
+            font-size: 17px;
+            font-weight: 600;
+            color: #22d3ee;
+        }
+
+        .right-box {
+            width: 300px;
+            height: 100%;
+            background: linear-gradient(135deg, #082f49 0%, #1e40af 100%);
+            margin-top: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3b82f6;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .left,
+        .right-btn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            color: #FFF;
+            font-size: 50px;
+            line-height: 50px;
+            text-align: center;
+            z-index: 1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .left:hover,
+        .right-btn:hover {
+            background-color: rgba(0, 191, 255, 0.2);
+        }
+
+        .right-btn {
+            left: calc(100% - 50px);
+            top: 45%;
+        }
+
+        .left {
+            left: 0;
+            top: 45%;
+        }
+
+        .box1 img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            z-index: 0;
+            object-fit: cover;
+        }
+
+        .dian {
+            position: absolute;
+            z-index: 1;
+            top: 85%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dian ul {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dian li {
+            display: block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .dian a {
+            text-decoration: none;
+            font-size: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .dian a[style*="red"] {
+            background-color: #06b6d4;
+        }
+
+        .alarm-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .alarm-img {
+            width: 100%;
+            flex: 0 0 180px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .alarm-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #0f172a;
+            transition: transform 0.3s;
+        }
+
+        .alarm-img:hover img {
+            transform: scale(1.02);
+        }
+
+        .fault-table {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            color: #e2e8f0;
+        }
+
+        .fault-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            align-items: center;
+        }
+
+        .fault-header {
+            font-weight: 600;
+            border-bottom: 2px solid #06b6d4;
+        }
+
+        .fault-col {
+            flex: 1;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        /* 其他页面基础样式 */
+        .simple-page {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e2e8f0;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="one">
+        <div class="two">
+            <div class="platform-title">
+                <i class="fas fa-oil-can"></i>
+                <span>Oil Insight 智能运维云平台</span>
+            </div>
+            <div class="user-widget" id="userWidget">
+                <div class="trigger-area" id="menuTrigger">
+                    <span class="user-name">管理员</span>
+                    <span class="user-avatar">A</span>
+                    <i class="fas fa-chevron-down triangle-icon" id="chevronIcon"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-item" onclick="alert('个人中心 - 展示资料')">
+                        <i class="fas fa-user-circle"></i> 个人中心
+                    </div>
+                    <div class="dropdown-item" onclick="alert('设置 - 参数配置')">
+                        <i class="fas fa-cog"></i> 设置
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="alert('退出登录')">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="three">
+            <div class="four">
+                <div class="nav-item main-nav-item" id="coreFunctionNav">
+                    <i class="fas fa-chart-pie"></i> <span>核心功能</span>
+                    <i class="fas fa-chevron-down sub-nav-icon"></i>
+                </div>
+                <div class="sub-nav-container" id="subNavContainer">
+                    <div class="sub-nav-item" data-page="1">首页</div>
+                    <div class="sub-nav-item" data-page="2">实时检测</div>
+                    <div class="sub-nav-item" data-page="3">设备管理</div>
+                    <div class="sub-nav-item" data-page="4">故障诊断</div>
+                    <div class="sub-nav-item" data-page="5">页面5</div>
+                    <div class="sub-nav-item" data-page="6">页面6</div>
+                </div>
+                <div style="flex:1"></div>
+                <div class="nav-item" style="border-top: 1px solid #334155;">
+                    <i class="fas fa-question-circle"></i> <span>帮助</span>
+                </div>
+            </div>
+            <div class="six">
+                <!-- 首页内容 -->
+                <div class="page-content active" id="page1">
+                    <div class="da">
+                        <div class="left-wrap">
+                            <div class="box1" id="box">
+                                <div class="left" id="left"><img src="/abc/arrow1.png" alt="上一张"></div>
+                                <div class="right-btn" id="right"><img src="/abc/arrow2.png" alt="下一张"></div>
+                                <img src="/abc/01.jpg" id="img" alt="轮播图">
+                                <div class="dian">
+                                    <ul id="dian">
+                                        <li><a href="/abc/01.jpg">.</a></li>
+                                        <li><a href="/abc/02.jpg">.</a></li>
+                                        <li><a href="/abc/03.jpg">.</a></li>
+                                        <li><a href="/abc/04.jpg">.</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="a01">
+                                <div class="table-main-title">健康评分</div>
+                                <div class="table-header">
+                                    <div class="col name">设备名称</div>
+                                    <div class="col score">评分</div>
+                                    <div class="col rating">总评</div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="col name">CYJ20-3-37HB</div>
+                                    <div class="col score"><span class="score-num">90.1</span></div>
+                                    <div class="col rating" style="color: #48bb78;">优</div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="col name">CYJ25-3.6-45HF</div>
+                                    <div class="col score"><span class="score-num">80.2</span></div>
+                                    <div class="col rating" style="color: #ed8936;">良</div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="col name">CYJ30-4.2-53HB</div>
+                                    <div class="col score"><span class="score-num">70.3</span></div>
+                                    <div class="col rating" style="color: #9f7aea;">中</div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="col name">CYJ35-4.8-60HF</div>
+                                    <div class="col score"><span class="score-num">60.5</span></div>
+                                    <div class="col rating" style="color: #e53e3e;">差</div>
+                                </div>
+                                <div class="table-row">
+                                    <div class="col name">CYJ18-3.2-33HF</div>
+                                    <div class="col score"><span class="score-num">67.8</span></div>
+                                    <div class="col rating" style="color: #e53e3e;">差</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="right-box">
+                            <div class="alarm-title">实时告警统计</div>
+                            <div class="alarm-img">
+                                <img src="/abc/1.jpg" alt="告警统计图">
+                            </div>
+                            <div class="fault-table">
+                                <div class="fault-row fault-header">
+                                    <div class="fault-col">故障设备名称</div>
+                                    <div class="fault-col">原因</div>
+                                </div>
+                                <div class="fault-row">
+                                    <div class="fault-col">CYJ22-3.8-40HB</div>
+                                    <div class="fault-col">传感器异常</div>
+                                </div>
+                                <div class="fault-row">
+                                    <div class="fault-col">CYJ14-3-26HF</div>
+                                    <div class="fault-col">供电不稳定</div>
+                                </div>
+                                <div class="fault-row">
+                                    <div class="fault-col">CYJQ20-3.6-37HQ</div>
+                                    <div class="fault-col">设备调试异常</div>
+                                </div>
+                                <div class="fault-row">
+                                    <div class="fault-col">CYJ16-3-30HQ</div>
+                                    <div class="fault-col">能源严重不足</div>
+                                </div>
+                                <div class="fault-row">
+                                    <div class="fault-col">CYJ28-4.5-50HQ</div>
+                                    <div class="fault-col">超负荷运行</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 实时检测页面 -->
+                <div class="page-content" id="page2">
+                    <div class="simple-page">实时检测页面 (2)</div>
+                </div>
+
+                <!-- 设备管理页面 -->
+                <div class="page-content" id="page3">
+                    <div class="simple-page">设备管理页面 (3)</div>
+                </div>
+
+                <!-- 故障诊断页面 -->
+                <div class="page-content" id="page4">
+                    <div class="simple-page">故障诊断页面 (4)</div>
+                </div>
+
+                <!-- 页面5 -->
+                <div class="page-content" id="page5">
+                    <div class="simple-page">你好 (页面5)</div>
+                </div>
+
+                <!-- 页面6 -->
+                <div class="page-content" id="page6">
+                    <div class="simple-page">你好 (页面6)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 顶部下拉菜单逻辑
+        (function() {
+            const trigger = document.getElementById('menuTrigger');
+            const dropdown = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('chevronIcon');
+
+            function toggleMenu(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+                trigger.classList.toggle('open');
+                chevron.style.transform = dropdown.classList.contains('show')
+                    ? 'rotate(180deg)'
+                    : 'rotate(0deg)';
+            }
+
+            trigger.addEventListener('click', toggleMenu);
+            document.addEventListener('click', function(event) {
+                if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                    trigger.classList.remove('open');
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    dropdown.classList.remove('show');
+                    trigger.classList.remove('open');
+                    chevron.style.transform = 'rotate(0deg)';
+                });
+            });
+
+            // 左侧导航逻辑
+            const coreFunctionNav = document.getElementById('coreFunctionNav');
+            const subNavContainer = document.getElementById('subNavContainer');
+            const subNavItems = document.querySelectorAll('.sub-nav-item');
+            const pageContents = document.querySelectorAll('.page-content');
+
+            function toggleSubNav() {
+                coreFunctionNav.classList.toggle('open');
+                coreFunctionNav.classList.toggle('active');
+                subNavContainer.classList.toggle('show');
+            }
+
+            function loadPage(pageNum) {
+                // 隐藏所有页面
+                pageContents.forEach(page => page.classList.remove('active'));
+                // 显示目标页面
+                const targetPage = document.getElementById(`page${pageNum}`);
+                if (targetPage) targetPage.classList.add('active');
+                
+                // 更新导航激活状态
+                subNavItems.forEach(item => item.classList.remove('active'));
+                const activeItem = document.querySelector(`.sub-nav-item[data-page="${pageNum}"]`);
+                if (activeItem) activeItem.classList.add('active');
+            }
+
+            coreFunctionNav.addEventListener('click', toggleSubNav);
+
+            subNavItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const page = this.getAttribute('data-page');
+                    loadPage(page);
+                });
+            });
+
+            // 轮播图逻辑
+            var leftBtn = document.getElementById('left');
+            var rightBtn = document.getElementById('right');
+            var dian = document.getElementById('dian');
+            var as = dian.getElementsByTagName('a');
+            var imgs = document.getElementById('img');
+
+            var l = as.length;
+            var p = as[0];
+            p.style.color = 'red';
+            for (var i = 0; i < as.length; i++) {
+                var a = as[i];
+                a.onclick = function() {
+                    for (var j = 0; j < as.length; j++) {
+                        var t = as[j];
+                        if (t.style.color === 'red') {
+                            t.style.color = 'black';
+                        }
+                    }
+                    imgs.src = this.href;
+                    this.style.color = 'red';
+                    return false;
+                }
+            }
+
+            leftBtn.onclick = function() {
+                for (var i = 0; i < l; i++) {
+                    var a = as[i];
+                    if (a.style.color === 'red') {
+                        if (i === 0)
+                            var t = as[3];
+                        else
+                            var t = as[i - 1];
+                        imgs.src = t.href;
+                        t.style.color = 'red';
+                        a.style.color = 'black';
+                        break;
+                    }
+                }
+            }
+
+            rightBtn.onclick = function() {
+                for (var i = 0; i < l; i++) {
+                    var a = as[i];
+                    if (a.style.color === 'red') {
+                        if (i === 3)
+                            var t = as[0];
+                        else
+                            var t = as[i + 1];
+                        imgs.src = t.href;
+                        t.style.color = 'red';
+                        a.style.color = 'black';
+                        break;
+                    }
+                }
+            }
+
+            function autoPlay() {
+                for (var i = 0; i < l; i++) {
+                    var a = as[i];
+                    if (a.style.color === 'red') {
+                        if (i === 3)
+                            var t = as[0];
+                        else
+                            var t = as[i + 1];
+                        imgs.src = t.href;
+                        t.style.color = 'red';
+                        a.style.color = 'black';
+                        break;
+                    }
+                }
+            }
+
+            var time = setInterval(autoPlay, 2000);
+
+            // 初始加载首页
+            loadPage('1');
+        })();
+    </script>
+</body>
+</html>
