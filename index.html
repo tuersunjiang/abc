@@ -29,7 +29,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('/abc/01.jpg');
+            background-image: url('../img/image.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -795,7 +795,7 @@
         </div>
     </div>
 
-    <!-- 主平台容器（原 zhu.html 所有内容） -->
+    <!-- 主平台容器 -->
     <div class="main-platform" id="mainPlatform">
         <div class="one">
             <div class="two">
@@ -834,6 +834,7 @@
                         <div class="sub-nav-item" data-page="2">实时检测</div>
                         <div class="sub-nav-item" data-page="3">设备管理</div>
                         <div class="sub-nav-item" data-page="4">故障诊断</div>
+                        <!-- 已移除页面5和页面6 -->
                     </div>
                     <div style="flex:1"></div>
                     <div class="nav-item" style="border-top: 1px solid #334155;">
@@ -905,7 +906,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 其他页面占位 -->
+                    <!-- 其他页面占位（设备管理、故障诊断） -->
                     <div class="page-content" id="page3"><div class="simple-page">设备管理页面 (3)</div></div>
                     <div class="page-content" id="page4"><div class="simple-page">故障诊断页面 (4)</div></div>
                 </div>
@@ -1105,7 +1106,7 @@
 
             loadPage('1');
 
-            // ---------- 振动频率实时监测（MQTT 连接超时改为 2 分钟）----------
+            // ---------- 振动频率实时监测（优化 MQTT 连接）----------
             function initVibrationMonitor() {
                 const chartDom = document.getElementById('chart');
                 if (!chartDom) return;
@@ -1150,22 +1151,24 @@
                     }
                 }
 
-                // 使用 WSS 加密连接
+                // 优化 MQTT 连接：使用 wss 加密，缩短连接超时至 30 秒，增加自动重连
                 const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
                     clientId: 'web_' + Math.random().toString(16).substr(2, 8),
                     keepalive: 60,
                     clean: true,
-                    reconnectPeriod: 3000,
-                    connectTimeout: 120000   // 连接超时设为 2 分钟（120000 毫秒）
+                    reconnectPeriod: 3000,      // 重连间隔 3 秒
+                    connectTimeout: 30000       // 连接超时 30 秒（原为 2 分钟，现优化）
                 });
 
-                // 连接超时检测（2分钟后若未连接则提示）
+                // 连接超时提示（30秒未连接上则提示）
                 let connectTimer = setTimeout(() => {
-                    if (client && client.connected !== true) {
+                    if (client && !client.connected) {
                         const txt = document.getElementById('statusText');
-                        if (txt) txt.textContent = '连接超时，请刷新重试';
+                        if (txt && txt.textContent === '连接中...') {
+                            txt.textContent = '连接超时，请检查网络';
+                        }
                     }
-                }, 120000);  // 从 10000 改为 120000（2分钟）
+                }, 30000);
 
                 client.on('connect', function () {
                     clearTimeout(connectTimer);
@@ -1187,14 +1190,14 @@
                     clearTimeout(connectTimer);
                     console.warn('MQTT 错误', err);
                     const txt = document.getElementById('statusText');
-                    if (txt) txt.textContent = '连接失败，请检查网络';
+                    if (txt) txt.textContent = '连接失败，请刷新重试';
                 });
 
                 client.on('close', function () {
                     const dot = document.getElementById('statusDot');
                     if (dot) dot.className = 'status-dot disconnected';
                     const txt = document.getElementById('statusText');
-                    if (txt && txt.textContent !== '连接超时，请刷新重试' && txt.textContent !== '连接失败，请检查网络') {
+                    if (txt && txt.textContent !== '连接超时，请检查网络' && txt.textContent !== '连接失败，请刷新重试') {
                         txt.textContent = '已断开，尝试重连...';
                     }
                 });
