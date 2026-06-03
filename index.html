@@ -29,7 +29,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('/abc/01.img');  /* 原登录页背景图片 */
+            background-image: url('../img/image.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -39,7 +39,6 @@
             z-index: 1000;
             transition: opacity 0.3s ease;
         }
-        /* 半透明遮罩层，使卡片更突出（可选） */
         .login-overlay::before {
             content: "";
             position: absolute;
@@ -929,7 +928,6 @@
             const errorTip = document.getElementById('errorTip');
             const displayUsernameSpan = document.getElementById('displayUsername');
 
-            // 登录验证：只要用户名和密码都不为空，即可登录（无默认账号密码限制）
             function doLogin(username, password) {
                 if (!username.trim()) {
                     errorTip.textContent = '请输入用户名';
@@ -939,24 +937,18 @@
                     errorTip.textContent = '请输入密码';
                     return false;
                 }
-                // 任何非空都允许登录
                 errorTip.textContent = '';
-                // 保存登录状态
                 sessionStorage.setItem('isLoggedIn', 'true');
                 sessionStorage.setItem('loggedUsername', username.trim());
-                // 更新顶部用户名
                 displayUsernameSpan.textContent = username.trim();
-                // 隐藏登录层，显示主平台
                 loginOverlay.classList.add('hide');
                 mainPlatform.classList.add('show');
-                // 触发图表自适应
                 setTimeout(() => {
                     if (window.vibrationChartInstance) window.vibrationChartInstance.resize();
                 }, 200);
                 return true;
             }
 
-            // 检查是否已登录
             function checkLoginStatus() {
                 const isLoggedIn = sessionStorage.getItem('isLoggedIn');
                 if (isLoggedIn === 'true') {
@@ -969,45 +961,37 @@
                 return false;
             }
 
-            // 退出登录
             function logout() {
                 sessionStorage.removeItem('isLoggedIn');
                 sessionStorage.removeItem('loggedUsername');
                 loginOverlay.classList.remove('hide');
                 mainPlatform.classList.remove('show');
-                // 清空表单
                 if (usernameInput) usernameInput.value = '';
                 if (passwordInput) passwordInput.value = '';
                 if (errorTip) errorTip.textContent = '';
             }
 
-            // 绑定登录表单事件
             if (loginForm) {
                 loginForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    const username = usernameInput.value;
-                    const password = passwordInput.value;
-                    doLogin(username, password);
+                    doLogin(usernameInput.value, passwordInput.value);
                 });
-                // 输入时清除错误提示
                 usernameInput.addEventListener('focus', () => { errorTip.textContent = ''; });
                 passwordInput.addEventListener('focus', () => { errorTip.textContent = ''; });
             }
 
-            // 绑定退出登录按钮
             document.addEventListener('click', function(e) {
                 if (e.target.closest && e.target.closest('#logoutBtn')) {
                     logout();
                 }
             });
 
-            // 如果已经登录，直接显示平台；否则显示登录页
             if (!checkLoginStatus()) {
                 loginOverlay.classList.remove('hide');
                 mainPlatform.classList.remove('show');
             }
 
-            // ---------- 以下为原 zhu.html 所有脚本（顶部菜单、导航、轮播、振动监测）----------
+            // ---------- 原 zhu.html 脚本（顶部菜单、导航、轮播）----------
             const trigger = document.getElementById('menuTrigger');
             const dropdown = document.getElementById('dropdownMenu');
             const chevron = document.getElementById('chevronIcon');
@@ -1061,11 +1045,11 @@
             subNavItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    const page = this.getAttribute('data-page');
-                    loadPage(page);
+                    loadPage(this.getAttribute('data-page'));
                 });
             });
 
+            // 轮播图
             const leftBtn = document.getElementById('left');
             const rightBtn = document.getElementById('right');
             const dianUl = document.getElementById('dian');
@@ -1074,11 +1058,9 @@
                 const imgs = document.getElementById('img');
                 const l = as.length;
                 if (l > 0) {
-                    let p = as[0];
-                    p.style.color = 'red';
+                    as[0].style.color = 'red';
                     for (let i = 0; i < l; i++) {
-                        let a = as[i];
-                        a.onclick = function() {
+                        as[i].onclick = function() {
                             for (let j = 0; j < l; j++) as[j].style.color = 'black';
                             imgs.src = this.href;
                             this.style.color = 'red';
@@ -1088,12 +1070,11 @@
                     if (leftBtn) {
                         leftBtn.onclick = function() {
                             for (let i = 0; i < l; i++) {
-                                let a = as[i];
-                                if (a.style.color === 'red') {
+                                if (as[i].style.color === 'red') {
                                     let t = (i === 0) ? as[l-1] : as[i-1];
                                     imgs.src = t.href;
                                     t.style.color = 'red';
-                                    a.style.color = 'black';
+                                    as[i].style.color = 'black';
                                     break;
                                 }
                             }
@@ -1102,35 +1083,33 @@
                     if (rightBtn) {
                         rightBtn.onclick = function() {
                             for (let i = 0; i < l; i++) {
-                                let a = as[i];
-                                if (a.style.color === 'red') {
+                                if (as[i].style.color === 'red') {
                                     let t = (i === l-1) ? as[0] : as[i+1];
                                     imgs.src = t.href;
                                     t.style.color = 'red';
-                                    a.style.color = 'black';
+                                    as[i].style.color = 'black';
                                     break;
                                 }
                             }
                         };
                     }
-                    function autoPlay() {
+                    setInterval(function() {
                         for (let i = 0; i < l; i++) {
-                            let a = as[i];
-                            if (a.style.color === 'red') {
+                            if (as[i].style.color === 'red') {
                                 let t = (i === l-1) ? as[0] : as[i+1];
                                 imgs.src = t.href;
                                 t.style.color = 'red';
-                                a.style.color = 'black';
+                                as[i].style.color = 'black';
                                 break;
                             }
                         }
-                    }
-                    setInterval(autoPlay, 2000);
+                    }, 2000);
                 }
             }
 
             loadPage('1');
 
+            // ---------- 振动频率实时监测（修复 MQTT 连接）----------
             function initVibrationMonitor() {
                 const chartDom = document.getElementById('chart');
                 if (!chartDom) return;
@@ -1139,6 +1118,7 @@
                 window.vibrationChartInstance = chart;
                 let freqHistory = [];
                 let dataCount = 0;
+
                 function getChartOption() {
                     return {
                         backgroundColor: 'transparent',
@@ -1173,18 +1153,57 @@
                         if (listContainer.children.length > 50) listContainer.removeChild(listContainer.lastChild);
                     }
                 }
-                const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt', { clientId: 'web_' + Math.random().toString(16).substr(2, 8), keepalive: 60, clean: true });
+
+                // 修复：使用 WSS 加密连接，避免 file:// 或混合内容限制
+                const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+                    clientId: 'web_' + Math.random().toString(16).substr(2, 8),
+                    keepalive: 60,
+                    clean: true,
+                    reconnectPeriod: 3000,
+                    connectTimeout: 10000
+                });
+
+                // 连接超时检测（10秒后若未连接则提示）
+                let connectTimer = setTimeout(() => {
+                    if (client && client.connected !== true) {
+                        const txt = document.getElementById('statusText');
+                        if (txt) txt.textContent = '连接超时，请刷新重试';
+                    }
+                }, 10000);
+
                 client.on('connect', function () {
+                    clearTimeout(connectTimer);
                     const dot = document.getElementById('statusDot');
                     const txt = document.getElementById('statusText');
                     if (dot) dot.className = 'status-dot connected';
                     if (txt) txt.textContent = '已连接 · broker.emqx.io';
-                    client.subscribe('elevator/vibration', { qos: 1 });
+                    client.subscribe('elevator/vibration', { qos: 1 }, (err) => {
+                        if (err) console.warn('订阅失败', err);
+                    });
                 });
-                client.on('message', function (topic, message) { const parsed = parseMessage(message.toString()); if (parsed) addDataPoint(parsed.freq, parsed.status); });
-                client.on('error', function () { const txt = document.getElementById('statusText'); if (txt) txt.textContent = '连接失败，请刷新重试'; });
-                client.on('close', function () { const dot = document.getElementById('statusDot'); if (dot) dot.className = 'status-dot disconnected'; const txt = document.getElementById('statusText'); if (txt) txt.textContent = '已断开'; });
+
+                client.on('message', function (topic, message) {
+                    const parsed = parseMessage(message.toString());
+                    if (parsed) addDataPoint(parsed.freq, parsed.status);
+                });
+
+                client.on('error', function (err) {
+                    clearTimeout(connectTimer);
+                    console.warn('MQTT 错误', err);
+                    const txt = document.getElementById('statusText');
+                    if (txt) txt.textContent = '连接失败，请检查网络';
+                });
+
+                client.on('close', function () {
+                    const dot = document.getElementById('statusDot');
+                    if (dot) dot.className = 'status-dot disconnected';
+                    const txt = document.getElementById('statusText');
+                    if (txt && txt.textContent !== '连接超时，请刷新重试' && txt.textContent !== '连接失败，请检查网络') {
+                        txt.textContent = '已断开，尝试重连...';
+                    }
+                });
             }
+
             if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initVibrationMonitor);
             else initVibrationMonitor();
             window.addEventListener('resize', function() { if (window.vibrationChartInstance) window.vibrationChartInstance.resize(); });
