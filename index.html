@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Oil Insight 智能运维云平台</title>
+    <!-- 第三方库：FontAwesome、ECharts、MQTT -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="https://unpkg.com/mqtt@5.10.0/dist/mqtt.min.js"></script>
     <style>
-        /* 重置与基础样式 */
+        /* ---------- 全局重置 & 基础样式 ---------- */
         * {
             padding: 0;
             margin: 0;
@@ -19,7 +22,7 @@
             background-color: #0f172a;
         }
 
-        /* 顶部导航栏样式 */
+        /* 主布局容器 */
         .one {
             width: 100vw;
             height: 100vh;
@@ -28,6 +31,7 @@
             flex-direction: column;
         }
 
+        /* 顶部导航栏 */
         .two {
             width: 100vw;
             height: 50px;
@@ -38,6 +42,7 @@
             padding: 0 24px;
             color: white;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
         }
 
         .platform-title {
@@ -132,12 +137,13 @@
             margin: 6px 0;
         }
 
-        /* 左侧导航与内容区域 */
+        /* 左侧导航 + 右侧内容区域 */
         .three {
             width: 100vw;
             flex: 1;
             display: flex;
             background-color: #0f172a;
+            min-height: 0;  /* 防止flex溢出 */
         }
 
         .four {
@@ -148,6 +154,7 @@
             flex-direction: column;
             padding: 20px 0;
             box-shadow: inset -1px 0 0 #334155;
+            flex-shrink: 0;
         }
 
         .nav-item {
@@ -247,7 +254,7 @@
             transform: rotate(180deg);
         }
 
-        /* 首页内容样式 */
+        /* ---------- 原有首页相关样式 (保留不动) ---------- */
         .page-content {
             display: none;
             width: 100%;
@@ -377,8 +384,7 @@
             gap: 20px;
         }
 
-        .left,
-        .right-btn {
+        .left, .right-btn {
             position: absolute;
             width: 50px;
             height: 50px;
@@ -391,8 +397,7 @@
             transition: background-color 0.2s;
         }
 
-        .left:hover,
-        .right-btn:hover {
+        .left:hover, .right-btn:hover {
             background-color: rgba(0, 191, 255, 0.2);
         }
 
@@ -502,7 +507,7 @@
             font-size: 15px;
         }
 
-        /* 其他页面基础样式 */
+        /* ---------- 页面占位简单样式 ---------- */
         .simple-page {
             width: 100%;
             height: 100%;
@@ -512,303 +517,464 @@
             color: #e2e8f0;
             font-size: 2rem;
         }
+
+        /* ---------- 实时检测页面（振动监测）专属样式 (原2.html风格完全保留) ---------- */
+        #page2 {
+            height: 100%;
+            overflow-y: auto;
+            padding: 0;
+        }
+        /* 覆盖.six内部padding，让监测页面顶边但保留滚动 */
+        #page2 .vibration-container {
+            background-color: #0f172a;
+            padding: 20px;
+            min-height: 100%;
+        }
+        /* 卡片布局和其他样式 */
+        .vibration-container .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: #1e293b;
+        }
+        .vibration-container .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .vibration-container .connected {
+            background: #10b981;
+        }
+        .vibration-container .disconnected {
+            background: #ef4444;
+        }
+        .vibration-container .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .vibration-container .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            text-align: center;
+            transition: transform 0.1s ease;
+        }
+        .vibration-container .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #22d3ee;
+            margin: 8px 0;
+        }
+        .vibration-container .card-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .vibration-container .card-icon {
+            font-size: 24px;
+            color: #06b6d4;
+        }
+        .vibration-container .main-row {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 270px);
+            min-height: 400px;
+        }
+        .vibration-container .chart-panel {
+            flex: 1;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+        .vibration-container .list-panel {
+            width: 300px;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .vibration-container .panel-title {
+            font-size: 16px;
+            color: #06b6d4;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+        .vibration-container .data-item {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #06b6d4;
+            display: flex;
+            justify-content: space-between;
+        }
+        .vibration-container .data-time {
+            color: #64748b;
+            font-size: 12px;
+        }
+        .vibration-container .data-val {
+            color: #22d3ee;
+            font-weight: 600;
+        }
+        .vibration-container .active {
+            border-left-color: #10b981;
+        }
+        .vibration-container .idle {
+            border-left-color: #64748b;
+        }
+        .vibration-container ::-webkit-scrollbar {
+            width: 6px;
+        }
+        .vibration-container ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .vibration-container ::-webkit-scrollbar-thumb {
+            background: #06b6d4;
+            border-radius: 3px;
+        }
+        /* 保证图表容器自适应 */
+        .vibration-container #chart {
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+        }
+        /* 响应式略微调整 */
+        @media (max-width: 1200px) {
+            .vibration-container .main-row {
+                flex-direction: column;
+                height: auto;
+            }
+            .vibration-container .list-panel {
+                width: 100%;
+                margin-top: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="one">
-        <div class="two">
-            <div class="platform-title">
-                <i class="fas fa-oil-can"></i>
-                <span>Oil Insight 智能运维云平台</span>
-            </div>
-            <div class="user-widget" id="userWidget">
-                <div class="trigger-area" id="menuTrigger">
-                    <span class="user-name">管理员</span>
-                    <span class="user-avatar">A</span>
-                    <i class="fas fa-chevron-down triangle-icon" id="chevronIcon"></i>
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-item" onclick="alert('个人中心 - 展示资料')">
-                        <i class="fas fa-user-circle"></i> 个人中心
-                    </div>
-                    <div class="dropdown-item" onclick="alert('设置 - 参数配置')">
-                        <i class="fas fa-cog"></i> 设置
-                    </div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-item" onclick="alert('退出登录')">
-                        <i class="fas fa-sign-out-alt"></i> 退出登录
-                    </div>
-                </div>
-            </div>
+<div class="one">
+    <div class="two">
+        <div class="platform-title">
+            <i class="fas fa-oil-can"></i>
+            <span>Oil Insight 智能运维云平台</span>
         </div>
-        <div class="three">
-            <div class="four">
-                <div class="nav-item main-nav-item" id="coreFunctionNav">
-                    <i class="fas fa-chart-pie"></i> <span>核心功能</span>
-                    <i class="fas fa-chevron-down sub-nav-icon"></i>
-                </div>
-                <div class="sub-nav-container" id="subNavContainer">
-                    <div class="sub-nav-item" data-page="1">首页</div>
-                    <div class="sub-nav-item" data-page="2">实时检测</div>
-                    <div class="sub-nav-item" data-page="3">设备管理</div>
-                    <div class="sub-nav-item" data-page="4">故障诊断</div>
-                    <div class="sub-nav-item" data-page="5">页面5</div>
-                    <div class="sub-nav-item" data-page="6">页面6</div>
-                </div>
-                <div style="flex:1"></div>
-                <div class="nav-item" style="border-top: 1px solid #334155;">
-                    <i class="fas fa-question-circle"></i> <span>帮助</span>
-                </div>
+        <div class="user-widget" id="userWidget">
+            <div class="trigger-area" id="menuTrigger">
+                <span class="user-name">管理员</span>
+                <span class="user-avatar">A</span>
+                <i class="fas fa-chevron-down triangle-icon" id="chevronIcon"></i>
             </div>
-            <div class="six">
-                <!-- 首页内容 -->
-                <div class="page-content active" id="page1">
-                    <div class="da">
-                        <div class="left-wrap">
-                            <div class="box1" id="box">
-                                <div class="left" id="left"><img src="/abc/arrow1.png" alt="上一张"></div>
-                                <div class="right-btn" id="right"><img src="/abc/arrow2.png" alt="下一张"></div>
-                                <img src="/abc/01.jpg" id="img" alt="轮播图">
-                                <div class="dian">
-                                    <ul id="dian">
-                                        <li><a href="/abc/01.jpg">.</a></li>
-                                        <li><a href="/abc/02.jpg">.</a></li>
-                                        <li><a href="/abc/03.jpg">.</a></li>
-                                        <li><a href="/abc/04.jpg">.</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="a01">
-                                <div class="table-main-title">健康评分</div>
-                                <div class="table-header">
-                                    <div class="col name">设备名称</div>
-                                    <div class="col score">评分</div>
-                                    <div class="col rating">总评</div>
-                                </div>
-                                <div class="table-row">
-                                    <div class="col name">CYJ20-3-37HB</div>
-                                    <div class="col score"><span class="score-num">90.1</span></div>
-                                    <div class="col rating" style="color: #48bb78;">优</div>
-                                </div>
-                                <div class="table-row">
-                                    <div class="col name">CYJ25-3.6-45HF</div>
-                                    <div class="col score"><span class="score-num">80.2</span></div>
-                                    <div class="col rating" style="color: #ed8936;">良</div>
-                                </div>
-                                <div class="table-row">
-                                    <div class="col name">CYJ30-4.2-53HB</div>
-                                    <div class="col score"><span class="score-num">70.3</span></div>
-                                    <div class="col rating" style="color: #9f7aea;">中</div>
-                                </div>
-                                <div class="table-row">
-                                    <div class="col name">CYJ35-4.8-60HF</div>
-                                    <div class="col score"><span class="score-num">60.5</span></div>
-                                    <div class="col rating" style="color: #e53e3e;">差</div>
-                                </div>
-                                <div class="table-row">
-                                    <div class="col name">CYJ18-3.2-33HF</div>
-                                    <div class="col score"><span class="score-num">67.8</span></div>
-                                    <div class="col rating" style="color: #e53e3e;">差</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="right-box">
-                            <div class="alarm-title">实时告警统计</div>
-                            <div class="alarm-img">
-                                <img src="/abc/1.jpg" alt="告警统计图">
-                            </div>
-                            <div class="fault-table">
-                                <div class="fault-row fault-header">
-                                    <div class="fault-col">故障设备名称</div>
-                                    <div class="fault-col">原因</div>
-                                </div>
-                                <div class="fault-row">
-                                    <div class="fault-col">CYJ22-3.8-40HB</div>
-                                    <div class="fault-col">传感器异常</div>
-                                </div>
-                                <div class="fault-row">
-                                    <div class="fault-col">CYJ14-3-26HF</div>
-                                    <div class="fault-col">供电不稳定</div>
-                                </div>
-                                <div class="fault-row">
-                                    <div class="fault-col">CYJQ20-3.6-37HQ</div>
-                                    <div class="fault-col">设备调试异常</div>
-                                </div>
-                                <div class="fault-row">
-                                    <div class="fault-col">CYJ16-3-30HQ</div>
-                                    <div class="fault-col">能源严重不足</div>
-                                </div>
-                                <div class="fault-row">
-                                    <div class="fault-col">CYJ28-4.5-50HQ</div>
-                                    <div class="fault-col">超负荷运行</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-item" onclick="alert('个人中心 - 展示资料')">
+                    <i class="fas fa-user-circle"></i> 个人中心
                 </div>
-
-                <!-- 实时检测页面 -->
-                <div class="page-content" id="page2">
-                    <div class="simple-page">实时检测页面 (2)</div>
+                <div class="dropdown-item" onclick="alert('设置 - 参数配置')">
+                    <i class="fas fa-cog"></i> 设置
                 </div>
-
-                <!-- 设备管理页面 -->
-                <div class="page-content" id="page3">
-                    <div class="simple-page">设备管理页面 (3)</div>
-                </div>
-
-                <!-- 故障诊断页面 -->
-                <div class="page-content" id="page4">
-                    <div class="simple-page">故障诊断页面 (4)</div>
-                </div>
-
-                <!-- 页面5 -->
-                <div class="page-content" id="page5">
-                    <div class="simple-page">你好 (页面5)</div>
-                </div>
-
-                <!-- 页面6 -->
-                <div class="page-content" id="page6">
-                    <div class="simple-page">你好 (页面6)</div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="alert('退出登录')">
+                    <i class="fas fa-sign-out-alt"></i> 退出登录
                 </div>
             </div>
         </div>
     </div>
+    <div class="three">
+        <div class="four">
+            <div class="nav-item main-nav-item" id="coreFunctionNav">
+                <i class="fas fa-chart-pie"></i> <span>核心功能</span>
+                <i class="fas fa-chevron-down sub-nav-icon"></i>
+            </div>
+            <div class="sub-nav-container" id="subNavContainer">
+                <div class="sub-nav-item" data-page="1">首页</div>
+                <div class="sub-nav-item" data-page="2">实时检测</div>
+                <div class="sub-nav-item" data-page="3">设备管理</div>
+                <div class="sub-nav-item" data-page="4">故障诊断</div>
+                <div class="sub-nav-item" data-page="5">页面5</div>
+                <div class="sub-nav-item" data-page="6">页面6</div>
+            </div>
+            <div style="flex:1"></div>
+            <div class="nav-item" style="border-top: 1px solid #334155;">
+                <i class="fas fa-question-circle"></i> <span>帮助</span>
+            </div>
+        </div>
+        <div class="six">
+            <!-- 首页内容 (原zhu.html首页) -->
+            <div class="page-content active" id="page1">
+                <div class="da">
+                    <div class="left-wrap">
+                        <div class="box1" id="box">
+                            <div class="left" id="left"><img src="/abc/arrow1.png" alt="上一张"></div>
+                            <div class="right-btn" id="right"><img src="/abc/arrow2.png" alt="下一张"></div>
+                            <img src="/abc/01.jpg" id="img" alt="轮播图">
+                            <div class="dian">
+                                <ul id="dian">
+                                    <li><a href="/abc/01.jpg">.</a></li>
+                                    <li><a href="/abc/02.jpg">.</a></li>
+                                    <li><a href="/abc/03.jpg">.</a></li>
+                                    <li><a href="/abc/04.jpg">.</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="a01">
+                            <div class="table-main-title">健康评分</div>
+                            <div class="table-header">
+                                <div class="col name">设备名称</div>
+                                <div class="col score">评分</div>
+                                <div class="col rating">总评</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col name">CYJ20-3-37HB</div>
+                                <div class="col score"><span class="score-num">90.1</span></div>
+                                <div class="col rating" style="color: #48bb78;">优</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col name">CYJ25-3.6-45HF</div>
+                                <div class="col score"><span class="score-num">80.2</span></div>
+                                <div class="col rating" style="color: #ed8936;">良</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col name">CYJ30-4.2-53HB</div>
+                                <div class="col score"><span class="score-num">70.3</span></div>
+                                <div class="col rating" style="color: #9f7aea;">中</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col name">CYJ35-4.8-60HF</div>
+                                <div class="col score"><span class="score-num">60.5</span></div>
+                                <div class="col rating" style="color: #e53e3e;">差</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col name">CYJ18-3.2-33HF</div>
+                                <div class="col score"><span class="score-num">67.8</span></div>
+                                <div class="col rating" style="color: #e53e3e;">差</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-box">
+                        <div class="alarm-title">实时告警统计</div>
+                        <div class="alarm-img">
+                            <img src="/abc/1.jpg" alt="告警统计图">
+                        </div>
+                        <div class="fault-table">
+                            <div class="fault-row fault-header">
+                                <div class="fault-col">故障设备名称</div>
+                                <div class="fault-col">原因</div>
+                            </div>
+                            <div class="fault-row">
+                                <div class="fault-col">CYJ22-3.8-40HB</div>
+                                <div class="fault-col">传感器异常</div>
+                            </div>
+                            <div class="fault-row">
+                                <div class="fault-col">CYJ14-3-26HF</div>
+                                <div class="fault-col">供电不稳定</div>
+                            </div>
+                            <div class="fault-row">
+                                <div class="fault-col">CYJQ20-3.6-37HQ</div>
+                                <div class="fault-col">设备调试异常</div>
+                            </div>
+                            <div class="fault-row">
+                                <div class="fault-col">CYJ16-3-30HQ</div>
+                                <div class="fault-col">能源严重不足</div>
+                            </div>
+                            <div class="fault-row">
+                                <div class="fault-col">CYJ28-4.5-50HQ</div>
+                                <div class="fault-col">超负荷运行</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <script>
-        // 顶部下拉菜单逻辑
-        (function() {
-            const trigger = document.getElementById('menuTrigger');
-            const dropdown = document.getElementById('dropdownMenu');
-            const chevron = document.getElementById('chevronIcon');
+            <!-- 实时检测页面：完整嵌入振动频率监测 (2.html 整合) -->
+            <div class="page-content" id="page2">
+                <div class="vibration-container">
+                    <!-- 头部状态栏（移植自2.html） -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h1 style="font-size: 24px; color: #06b6d4; margin:0;"><i class="fas fa-wave-square"></i> 抽油机振动频率实时监测</h1>
+                        <div class="status">
+                            <span class="status-dot disconnected" id="statusDot"></span>
+                            <span id="statusText">连接中...</span>
+                        </div>
+                    </div>
 
-            function toggleMenu(e) {
+                    <!-- 4个指标卡片 -->
+                    <div class="cards">
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="card-value" id="freqVal">--</div>
+                            <div class="card-label">振动频率 (Hz)</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
+                            <div class="card-value" id="statusVal">--</div>
+                            <div class="card-label">运行状态</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="card-value" id="countVal">0</div>
+                            <div class="card-label">累计数据条数</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-clock"></i></div>
+                            <div class="card-value" id="timeVal">--</div>
+                            <div class="card-label">最后更新时间</div>
+                        </div>
+                    </div>
+
+                    <!-- 图表和历史区域 -->
+                    <div class="main-row">
+                        <div class="chart-panel">
+                            <div class="panel-title"><i class="fas fa-chart-area"></i> 振动频率趋势</div>
+                            <div id="chart" style="width:100%; height:100%;"></div>
+                        </div>
+                        <div class="list-panel">
+                            <div class="panel-title"><i class="fas fa-list"></i> 历史记录</div>
+                            <div id="dataList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他页面占位 -->
+            <div class="page-content" id="page3">
+                <div class="simple-page">设备管理页面 (3)</div>
+            </div>
+            <div class="page-content" id="page4">
+                <div class="simple-page">故障诊断页面 (4)</div>
+            </div>
+            <div class="page-content" id="page5">
+                <div class="simple-page">你好 (页面5)</div>
+            </div>
+            <div class="page-content" id="page6">
+                <div class="simple-page">你好 (页面6)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 顶部下拉菜单逻辑 -----
+        const trigger = document.getElementById('menuTrigger');
+        const dropdown = document.getElementById('dropdownMenu');
+        const chevron = document.getElementById('chevronIcon');
+
+        function toggleMenu(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+            trigger.classList.toggle('open');
+            chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+        trigger.addEventListener('click', toggleMenu);
+        document.addEventListener('click', function(event) {
+            if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                trigger.classList.remove('open');
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+                trigger.classList.remove('open');
+                chevron.style.transform = 'rotate(0deg)';
+            });
+        });
+
+        // ----- 左侧导航折叠 + 页面切换 -----
+        const coreFunctionNav = document.getElementById('coreFunctionNav');
+        const subNavContainer = document.getElementById('subNavContainer');
+        const subNavItems = document.querySelectorAll('.sub-nav-item');
+        const pageContents = document.querySelectorAll('.page-content');
+
+        function toggleSubNav() {
+            coreFunctionNav.classList.toggle('open');
+            coreFunctionNav.classList.toggle('active');
+            subNavContainer.classList.toggle('show');
+        }
+        function loadPage(pageNum) {
+            pageContents.forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(`page${pageNum}`);
+            if (targetPage) targetPage.classList.add('active');
+            subNavItems.forEach(item => item.classList.remove('active'));
+            const activeItem = document.querySelector(`.sub-nav-item[data-page="${pageNum}"]`);
+            if (activeItem) activeItem.classList.add('active');
+
+            // 如果切换到实时检测页面（page2），且图表已存在则触发resize，保证图表自适应
+            if (pageNum === '2' && window.vibrationChartInstance) {
+                setTimeout(() => {
+                    window.vibrationChartInstance.resize();
+                }, 100);
+            }
+        }
+
+        coreFunctionNav.addEventListener('click', toggleSubNav);
+        subNavItems.forEach(item => {
+            item.addEventListener('click', function(e) {
                 e.stopPropagation();
-                dropdown.classList.toggle('show');
-                trigger.classList.toggle('open');
-                chevron.style.transform = dropdown.classList.contains('show')
-                    ? 'rotate(180deg)'
-                    : 'rotate(0deg)';
-            }
-
-            trigger.addEventListener('click', toggleMenu);
-            document.addEventListener('click', function(event) {
-                if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
-                    dropdown.classList.remove('show');
-                    trigger.classList.remove('open');
-                    chevron.style.transform = 'rotate(0deg)';
-                }
+                const page = this.getAttribute('data-page');
+                loadPage(page);
             });
+        });
 
-            const dropdownItems = document.querySelectorAll('.dropdown-item');
-            dropdownItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    dropdown.classList.remove('show');
-                    trigger.classList.remove('open');
-                    chevron.style.transform = 'rotate(0deg)';
-                });
-            });
-
-            // 左侧导航逻辑
-            const coreFunctionNav = document.getElementById('coreFunctionNav');
-            const subNavContainer = document.getElementById('subNavContainer');
-            const subNavItems = document.querySelectorAll('.sub-nav-item');
-            const pageContents = document.querySelectorAll('.page-content');
-
-            function toggleSubNav() {
-                coreFunctionNav.classList.toggle('open');
-                coreFunctionNav.classList.toggle('active');
-                subNavContainer.classList.toggle('show');
-            }
-
-            function loadPage(pageNum) {
-                // 隐藏所有页面
-                pageContents.forEach(page => page.classList.remove('active'));
-                // 显示目标页面
-                const targetPage = document.getElementById(`page${pageNum}`);
-                if (targetPage) targetPage.classList.add('active');
-                
-                // 更新导航激活状态
-                subNavItems.forEach(item => item.classList.remove('active'));
-                const activeItem = document.querySelector(`.sub-nav-item[data-page="${pageNum}"]`);
-                if (activeItem) activeItem.classList.add('active');
-            }
-
-            coreFunctionNav.addEventListener('click', toggleSubNav);
-
-            subNavItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const page = this.getAttribute('data-page');
-                    loadPage(page);
-                });
-            });
-
-            // 轮播图逻辑
-            var leftBtn = document.getElementById('left');
-            var rightBtn = document.getElementById('right');
-            var dian = document.getElementById('dian');
-            var as = dian.getElementsByTagName('a');
-            var imgs = document.getElementById('img');
-
-            var l = as.length;
-            var p = as[0];
+        // ----- 首页轮播图逻辑 (原有保留)-----
+        const leftBtn = document.getElementById('left');
+        const rightBtn = document.getElementById('right');
+        const dian = document.getElementById('dian');
+        const as = dian.getElementsByTagName('a');
+        const imgs = document.getElementById('img');
+        const l = as.length;
+        if (as.length) {
+            let p = as[0];
             p.style.color = 'red';
-            for (var i = 0; i < as.length; i++) {
-                var a = as[i];
+            for (let i = 0; i < as.length; i++) {
+                let a = as[i];
                 a.onclick = function() {
-                    for (var j = 0; j < as.length; j++) {
-                        var t = as[j];
-                        if (t.style.color === 'red') {
-                            t.style.color = 'black';
-                        }
-                    }
+                    for (let j = 0; j < as.length; j++) as[j].style.color = 'black';
                     imgs.src = this.href;
                     this.style.color = 'red';
                     return false;
-                }
+                };
             }
-
             leftBtn.onclick = function() {
-                for (var i = 0; i < l; i++) {
-                    var a = as[i];
+                for (let i = 0; i < l; i++) {
+                    let a = as[i];
                     if (a.style.color === 'red') {
-                        if (i === 0)
-                            var t = as[3];
-                        else
-                            var t = as[i - 1];
+                        let t = (i === 0) ? as[l-1] : as[i-1];
                         imgs.src = t.href;
                         t.style.color = 'red';
                         a.style.color = 'black';
                         break;
                     }
                 }
-            }
-
+            };
             rightBtn.onclick = function() {
-                for (var i = 0; i < l; i++) {
-                    var a = as[i];
+                for (let i = 0; i < l; i++) {
+                    let a = as[i];
                     if (a.style.color === 'red') {
-                        if (i === 3)
-                            var t = as[0];
-                        else
-                            var t = as[i + 1];
+                        let t = (i === l-1) ? as[0] : as[i+1];
                         imgs.src = t.href;
                         t.style.color = 'red';
                         a.style.color = 'black';
                         break;
                     }
                 }
-            }
-
+            };
             function autoPlay() {
-                for (var i = 0; i < l; i++) {
-                    var a = as[i];
+                for (let i = 0; i < l; i++) {
+                    let a = as[i];
                     if (a.style.color === 'red') {
-                        if (i === 3)
-                            var t = as[0];
-                        else
-                            var t = as[i + 1];
+                        let t = (i === l-1) ? as[0] : as[i+1];
                         imgs.src = t.href;
                         t.style.color = 'red';
                         a.style.color = 'black';
@@ -816,12 +982,122 @@
                     }
                 }
             }
+            setInterval(autoPlay, 2000);
+        }
 
-            var time = setInterval(autoPlay, 2000);
+        // 加载默认首页
+        loadPage('1');
 
-            // 初始加载首页
-            loadPage('1');
-        })();
-    </script>
+        // ---------- 振动频率实时监测模块（2.html核心逻辑）----------
+        // 等待页面包含所需DOM元素后再初始化
+        function initVibrationMonitor() {
+            const chartDom = document.getElementById('chart');
+            if (!chartDom) return;
+            // 避免重复创建实例
+            if (window.vibrationChartInstance) {
+                window.vibrationChartInstance.dispose();
+            }
+            let chart = echarts.init(chartDom);
+            window.vibrationChartInstance = chart;
+            let freqHistory = [];
+            let dataCount = 0;
+
+            function getChartOption() {
+                return {
+                    backgroundColor: 'transparent',
+                    grid: { left: 50, right: 30, top: 20, bottom: 30 },
+                    xAxis: { type: 'category', data: freqHistory.map((_, i) => (i + 1).toString()), axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8', fontSize: 11 } },
+                    yAxis: { type: 'value', name: 'Hz', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } } },
+                    series: [{
+                        type: 'line', data: freqHistory, smooth: true, symbol: 'circle', symbolSize: 6,
+                        lineStyle: { color: '#06b6d4', width: 2 },
+                        itemStyle: { color: '#22d3ee' },
+                        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'rgba(6,182,212,0.3)'},{offset:1,color:'rgba(6,182,212,0.02)'}]) }
+                    }]
+                };
+            }
+            chart.setOption(getChartOption());
+
+            function updateChart() {
+                chart.setOption({ xAxis: { data: freqHistory.map((_, i) => (i + 1).toString()) }, series: [{ data: freqHistory }] });
+            }
+
+            function parseMessage(msg) {
+                const match = msg.match(/Freq:(\d+\.?\d*)Hz\s+(ACTIVE|IDLE)/);
+                if (!match) return null;
+                return { freq: parseFloat(match[1]), status: match[2] };
+            }
+
+            function addDataPoint(freq, status) {
+                freqHistory.push(freq);
+                if (freqHistory.length > 30) freqHistory.shift();
+                dataCount++;
+                updateChart();
+
+                const freqEl = document.getElementById('freqVal');
+                const statusEl = document.getElementById('statusVal');
+                const countEl = document.getElementById('countVal');
+                const timeEl = document.getElementById('timeVal');
+                if (freqEl) freqEl.textContent = freq.toFixed(1);
+                if (statusEl) {
+                    statusEl.textContent = status;
+                    statusEl.style.color = status === 'ACTIVE' ? '#10b981' : '#64748b';
+                }
+                if (countEl) countEl.textContent = dataCount;
+                if (timeEl) timeEl.textContent = new Date().toLocaleTimeString();
+
+                const listContainer = document.getElementById('dataList');
+                if (listContainer) {
+                    const item = document.createElement('div');
+                    item.className = 'data-item ' + (status === 'ACTIVE' ? 'active' : 'idle');
+                    item.innerHTML = `<span><span class="data-time">${new Date().toLocaleTimeString()}</span>  ${freq.toFixed(1)} Hz</span><span class="data-val">${status}</span>`;
+                    listContainer.insertBefore(item, listContainer.firstChild);
+                    if (listContainer.children.length > 50) listContainer.removeChild(listContainer.lastChild);
+                }
+            }
+
+            // MQTT 连接 (EMQX 公共 broker)
+            const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt', {
+                clientId: 'web_' + Math.random().toString(16).substr(2, 8),
+                keepalive: 60,
+                clean: true
+            });
+            client.on('connect', function () {
+                const dot = document.getElementById('statusDot');
+                const txt = document.getElementById('statusText');
+                if (dot) dot.className = 'status-dot connected';
+                if (txt) txt.textContent = '已连接 · broker.emqx.io';
+                client.subscribe('elevator/vibration', { qos: 1 });
+            });
+            client.on('message', function (topic, message) {
+                const parsed = parseMessage(message.toString());
+                if (parsed) addDataPoint(parsed.freq, parsed.status);
+            });
+            client.on('error', function () {
+                const txt = document.getElementById('statusText');
+                if (txt) txt.textContent = '连接失败，请刷新重试';
+            });
+            client.on('close', function () {
+                const dot = document.getElementById('statusDot');
+                if (dot) dot.className = 'status-dot disconnected';
+                const txt = document.getElementById('statusText');
+                if (txt) txt.textContent = '已断开';
+            });
+        }
+
+        // 延迟初始化，确保DOM完全加载
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initVibrationMonitor);
+        } else {
+            initVibrationMonitor();
+        }
+        // 监听窗口resize时调整图表尺寸
+        window.addEventListener('resize', function() {
+            if (window.vibrationChartInstance) {
+                window.vibrationChartInstance.resize();
+            }
+        });
+    })();
+</script>
 </body>
 </html>
