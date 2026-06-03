@@ -22,7 +22,128 @@
             background-color: #0f172a;
         }
 
-        /* 主布局容器 */
+        /* ---------- 登录页面样式 (移植自 deng.css，适配当前结构) ---------- */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        .login-overlay.hide {
+            display: none;
+        }
+        .login-card {
+            width: 400px;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #f8fafc;
+        }
+        .login-logo i {
+            font-size: 48px;
+            color: #06b6d4;
+            margin-bottom: 10px;
+        }
+        .login-logo h2 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .login-logo p {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .form-item {
+            position: relative;
+        }
+        .form-item label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06b6d4;
+            font-size: 18px;
+        }
+        .form-item input {
+            width: 100%;
+            height: 50px;
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 0 15px 0 45px;
+            color: #e2e8f0;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-item input:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+        .form-item input::placeholder {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .error-tip {
+            height: 20px;
+            line-height: 20px;
+            color: #ef4444;
+            font-size: 14px;
+            text-align: center;
+        }
+        .login-btn {
+            height: 50px;
+            background-color: #06b6d4;
+            border: none;
+            border-radius: 8px;
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .login-btn:hover {
+            background-color: #0891b2;
+        }
+        @media (max-width: 450px) {
+            .login-card {
+                width: 90%;
+                padding: 30px 20px;
+            }
+        }
+
+        /* ---------- 主平台容器（初始隐藏）---------- */
+        .main-platform {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .main-platform.show {
+            display: flex;
+        }
+
+        /* 主平台内部样式（原 zhu.html 所有样式完全保留） */
         .one {
             width: 100vw;
             height: 100vh;
@@ -31,7 +152,6 @@
             flex-direction: column;
         }
 
-        /* 顶部导航栏 */
         .two {
             width: 100vw;
             height: 50px;
@@ -137,13 +257,12 @@
             margin: 6px 0;
         }
 
-        /* 左侧导航 + 右侧内容区域 */
         .three {
             width: 100vw;
             flex: 1;
             display: flex;
             background-color: #0f172a;
-            min-height: 0;  /* 防止flex溢出 */
+            min-height: 0;
         }
 
         .four {
@@ -226,13 +345,6 @@
             overflow-y: auto;
         }
 
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: #0f172a;
-        }
-
         .user-avatar {
             width: 28px;
             height: 28px;
@@ -254,7 +366,6 @@
             transform: rotate(180deg);
         }
 
-        /* ---------- 原有首页相关样式 (保留不动) ---------- */
         .page-content {
             display: none;
             width: 100%;
@@ -507,7 +618,6 @@
             font-size: 15px;
         }
 
-        /* ---------- 页面占位简单样式 ---------- */
         .simple-page {
             width: 100%;
             height: 100%;
@@ -518,19 +628,17 @@
             font-size: 2rem;
         }
 
-        /* ---------- 实时检测页面（振动监测）专属样式 (原2.html风格完全保留) ---------- */
+        /* 实时检测页面样式 */
         #page2 {
             height: 100%;
             overflow-y: auto;
             padding: 0;
         }
-        /* 覆盖.six内部padding，让监测页面顶边但保留滚动 */
         #page2 .vibration-container {
             background-color: #0f172a;
             padding: 20px;
             min-height: 100%;
         }
-        /* 卡片布局和其他样式 */
         .vibration-container .status {
             display: flex;
             align-items: center;
@@ -562,7 +670,6 @@
             padding: 20px;
             border: 1px solid #334155;
             text-align: center;
-            transition: transform 0.1s ease;
         }
         .vibration-container .card-value {
             font-size: 36px;
@@ -633,23 +740,11 @@
         .vibration-container .idle {
             border-left-color: #64748b;
         }
-        .vibration-container ::-webkit-scrollbar {
-            width: 6px;
-        }
-        .vibration-container ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        .vibration-container ::-webkit-scrollbar-thumb {
-            background: #06b6d4;
-            border-radius: 3px;
-        }
-        /* 保证图表容器自适应 */
         .vibration-container #chart {
             width: 100%;
             flex: 1;
             min-height: 0;
         }
-        /* 响应式略微调整 */
         @media (max-width: 1200px) {
             .vibration-container .main-row {
                 flex-direction: column;
@@ -663,441 +758,437 @@
     </style>
 </head>
 <body>
-<div class="one">
-    <div class="two">
-        <div class="platform-title">
-            <i class="fas fa-oil-can"></i>
-            <span>Oil Insight 智能运维云平台</span>
-        </div>
-        <div class="user-widget" id="userWidget">
-            <div class="trigger-area" id="menuTrigger">
-                <span class="user-name">管理员</span>
-                <span class="user-avatar">A</span>
-                <i class="fas fa-chevron-down triangle-icon" id="chevronIcon"></i>
+    <!-- 登录层 -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-oil-can"></i>
+                <h2>Oil Insight</h2>
+                <p>智能运维云平台</p>
             </div>
-            <div class="dropdown-menu" id="dropdownMenu">
-                <div class="dropdown-item" onclick="alert('个人中心 - 展示资料')">
-                    <i class="fas fa-user-circle"></i> 个人中心
+            <form id="loginForm" class="login-form">
+                <div class="form-item">
+                    <label for="username"><i class="fas fa-user"></i></label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
                 </div>
-                <div class="dropdown-item" onclick="alert('设置 - 参数配置')">
-                    <i class="fas fa-cog"></i> 设置
+                <div class="form-item">
+                    <label for="password"><i class="fas fa-lock"></i></label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
                 </div>
-                <div class="dropdown-divider"></div>
-                <div class="dropdown-item" onclick="alert('退出登录')">
-                    <i class="fas fa-sign-out-alt"></i> 退出登录
+                <div class="error-tip" id="errorTip"></div>
+                <button type="submit" class="login-btn">登 录</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 主平台容器（原 zhu.html 所有内容） -->
+    <div class="main-platform" id="mainPlatform">
+        <div class="one">
+            <div class="two">
+                <div class="platform-title">
+                    <i class="fas fa-oil-can"></i>
+                    <span>Oil Insight 智能运维云平台</span>
+                </div>
+                <div class="user-widget" id="userWidget">
+                    <div class="trigger-area" id="menuTrigger">
+                        <span class="user-name" id="displayUsername">管理员</span>
+                        <span class="user-avatar">A</span>
+                        <i class="fas fa-chevron-down triangle-icon" id="chevronIcon"></i>
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="alert('个人中心 - 展示资料')">
+                            <i class="fas fa-user-circle"></i> 个人中心
+                        </div>
+                        <div class="dropdown-item" onclick="alert('设置 - 参数配置')">
+                            <i class="fas fa-cog"></i> 设置
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> 退出登录
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="three">
+                <div class="four">
+                    <div class="nav-item main-nav-item" id="coreFunctionNav">
+                        <i class="fas fa-chart-pie"></i> <span>核心功能</span>
+                        <i class="fas fa-chevron-down sub-nav-icon"></i>
+                    </div>
+                    <div class="sub-nav-container" id="subNavContainer">
+                        <div class="sub-nav-item" data-page="1">首页</div>
+                        <div class="sub-nav-item" data-page="2">实时检测</div>
+                        <div class="sub-nav-item" data-page="3">设备管理</div>
+                        <div class="sub-nav-item" data-page="4">故障诊断</div>
+                        <div class="sub-nav-item" data-page="5">页面5</div>
+                        <div class="sub-nav-item" data-page="6">页面6</div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <div class="nav-item" style="border-top: 1px solid #334155;">
+                        <i class="fas fa-question-circle"></i> <span>帮助</span>
+                    </div>
+                </div>
+                <div class="six">
+                    <!-- 首页内容 -->
+                    <div class="page-content active" id="page1">
+                        <div class="da">
+                            <div class="left-wrap">
+                                <div class="box1" id="box">
+                                    <div class="left" id="left"><img src="/abc/arrow1.png" alt="上一张"></div>
+                                    <div class="right-btn" id="right"><img src="/abc/arrow2.png" alt="下一张"></div>
+                                    <img src="/abc/01.jpg" id="img" alt="轮播图">
+                                    <div class="dian">
+                                        <ul id="dian">
+                                            <li><a href="/abc/01.jpg">.</a></li>
+                                            <li><a href="/abc/02.jpg">.</a></li>
+                                            <li><a href="/abc/03.jpg">.</a></li>
+                                            <li><a href="/abc/04.jpg">.</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="a01">
+                                    <div class="table-main-title">健康评分</div>
+                                    <div class="table-header">
+                                        <div class="col name">设备名称</div>
+                                        <div class="col score">评分</div>
+                                        <div class="col rating">总评</div>
+                                    </div>
+                                    <div class="table-row"><div class="col name">CYJ20-3-37HB</div><div class="col score"><span class="score-num">90.1</span></div><div class="col rating" style="color: #48bb78;">优</div></div>
+                                    <div class="table-row"><div class="col name">CYJ25-3.6-45HF</div><div class="col score"><span class="score-num">80.2</span></div><div class="col rating" style="color: #ed8936;">良</div></div>
+                                    <div class="table-row"><div class="col name">CYJ30-4.2-53HB</div><div class="col score"><span class="score-num">70.3</span></div><div class="col rating" style="color: #9f7aea;">中</div></div>
+                                    <div class="table-row"><div class="col name">CYJ35-4.8-60HF</div><div class="col score"><span class="score-num">60.5</span></div><div class="col rating" style="color: #e53e3e;">差</div></div>
+                                    <div class="table-row"><div class="col name">CYJ18-3.2-33HF</div><div class="col score"><span class="score-num">67.8</span></div><div class="col rating" style="color: #e53e3e;">差</div></div>
+                                </div>
+                            </div>
+                            <div class="right-box">
+                                <div class="alarm-title">实时告警统计</div>
+                                <div class="alarm-img"><img src="/abc/1.jpg" alt="告警统计图"></div>
+                                <div class="fault-table">
+                                    <div class="fault-row fault-header"><div class="fault-col">故障设备名称</div><div class="fault-col">原因</div></div>
+                                    <div class="fault-row"><div class="fault-col">CYJ22-3.8-40HB</div><div class="fault-col">传感器异常</div></div>
+                                    <div class="fault-row"><div class="fault-col">CYJ14-3-26HF</div><div class="fault-col">供电不稳定</div></div>
+                                    <div class="fault-row"><div class="fault-col">CYJQ20-3.6-37HQ</div><div class="fault-col">设备调试异常</div></div>
+                                    <div class="fault-row"><div class="fault-col">CYJ16-3-30HQ</div><div class="fault-col">能源严重不足</div></div>
+                                    <div class="fault-row"><div class="fault-col">CYJ28-4.5-50HQ</div><div class="fault-col">超负荷运行</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 实时检测页面 -->
+                    <div class="page-content" id="page2">
+                        <div class="vibration-container">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h1 style="font-size: 24px; color: #06b6d4; margin:0;"><i class="fas fa-wave-square"></i> 抽油机振动频率实时监测</h1>
+                                <div class="status"><span class="status-dot disconnected" id="statusDot"></span><span id="statusText">连接中...</span></div>
+                            </div>
+                            <div class="cards">
+                                <div class="card"><div class="card-icon"><i class="fas fa-tachometer-alt"></i></div><div class="card-value" id="freqVal">--</div><div class="card-label">振动频率 (Hz)</div></div>
+                                <div class="card"><div class="card-icon"><i class="fas fa-heartbeat"></i></div><div class="card-value" id="statusVal">--</div><div class="card-label">运行状态</div></div>
+                                <div class="card"><div class="card-icon"><i class="fas fa-chart-line"></i></div><div class="card-value" id="countVal">0</div><div class="card-label">累计数据条数</div></div>
+                                <div class="card"><div class="card-icon"><i class="fas fa-clock"></i></div><div class="card-value" id="timeVal">--</div><div class="card-label">最后更新时间</div></div>
+                            </div>
+                            <div class="main-row">
+                                <div class="chart-panel"><div class="panel-title"><i class="fas fa-chart-area"></i> 振动频率趋势</div><div id="chart" style="width:100%; height:100%;"></div></div>
+                                <div class="list-panel"><div class="panel-title"><i class="fas fa-list"></i> 历史记录</div><div id="dataList"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 其他页面占位 -->
+                    <div class="page-content" id="page3"><div class="simple-page">设备管理页面 (3)</div></div>
+                    <div class="page-content" id="page4"><div class="simple-page">故障诊断页面 (4)</div></div>
+                    <div class="page-content" id="page5"><div class="simple-page">你好 (页面5)</div></div>
+                    <div class="page-content" id="page6"><div class="simple-page">你好 (页面6)</div></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="three">
-        <div class="four">
-            <div class="nav-item main-nav-item" id="coreFunctionNav">
-                <i class="fas fa-chart-pie"></i> <span>核心功能</span>
-                <i class="fas fa-chevron-down sub-nav-icon"></i>
-            </div>
-            <div class="sub-nav-container" id="subNavContainer">
-                <div class="sub-nav-item" data-page="1">首页</div>
-                <div class="sub-nav-item" data-page="2">实时检测</div>
-                <div class="sub-nav-item" data-page="3">设备管理</div>
-                <div class="sub-nav-item" data-page="4">故障诊断</div>
-                <div class="sub-nav-item" data-page="5">页面5</div>
-                <div class="sub-nav-item" data-page="6">页面6</div>
-            </div>
-            <div style="flex:1"></div>
-            <div class="nav-item" style="border-top: 1px solid #334155;">
-                <i class="fas fa-question-circle"></i> <span>帮助</span>
-            </div>
-        </div>
-        <div class="six">
-            <!-- 首页内容 (原zhu.html首页) -->
-            <div class="page-content active" id="page1">
-                <div class="da">
-                    <div class="left-wrap">
-                        <div class="box1" id="box">
-                            <div class="left" id="left"><img src="/abc/arrow1.png" alt="上一张"></div>
-                            <div class="right-btn" id="right"><img src="/abc/arrow2.png" alt="下一张"></div>
-                            <img src="/abc/01.jpg" id="img" alt="轮播图">
-                            <div class="dian">
-                                <ul id="dian">
-                                    <li><a href="/abc/01.jpg">.</a></li>
-                                    <li><a href="/abc/02.jpg">.</a></li>
-                                    <li><a href="/abc/03.jpg">.</a></li>
-                                    <li><a href="/abc/04.jpg">.</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="a01">
-                            <div class="table-main-title">健康评分</div>
-                            <div class="table-header">
-                                <div class="col name">设备名称</div>
-                                <div class="col score">评分</div>
-                                <div class="col rating">总评</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="col name">CYJ20-3-37HB</div>
-                                <div class="col score"><span class="score-num">90.1</span></div>
-                                <div class="col rating" style="color: #48bb78;">优</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="col name">CYJ25-3.6-45HF</div>
-                                <div class="col score"><span class="score-num">80.2</span></div>
-                                <div class="col rating" style="color: #ed8936;">良</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="col name">CYJ30-4.2-53HB</div>
-                                <div class="col score"><span class="score-num">70.3</span></div>
-                                <div class="col rating" style="color: #9f7aea;">中</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="col name">CYJ35-4.8-60HF</div>
-                                <div class="col score"><span class="score-num">60.5</span></div>
-                                <div class="col rating" style="color: #e53e3e;">差</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="col name">CYJ18-3.2-33HF</div>
-                                <div class="col score"><span class="score-num">67.8</span></div>
-                                <div class="col rating" style="color: #e53e3e;">差</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="right-box">
-                        <div class="alarm-title">实时告警统计</div>
-                        <div class="alarm-img">
-                            <img src="/abc/1.jpg" alt="告警统计图">
-                        </div>
-                        <div class="fault-table">
-                            <div class="fault-row fault-header">
-                                <div class="fault-col">故障设备名称</div>
-                                <div class="fault-col">原因</div>
-                            </div>
-                            <div class="fault-row">
-                                <div class="fault-col">CYJ22-3.8-40HB</div>
-                                <div class="fault-col">传感器异常</div>
-                            </div>
-                            <div class="fault-row">
-                                <div class="fault-col">CYJ14-3-26HF</div>
-                                <div class="fault-col">供电不稳定</div>
-                            </div>
-                            <div class="fault-row">
-                                <div class="fault-col">CYJQ20-3.6-37HQ</div>
-                                <div class="fault-col">设备调试异常</div>
-                            </div>
-                            <div class="fault-row">
-                                <div class="fault-col">CYJ16-3-30HQ</div>
-                                <div class="fault-col">能源严重不足</div>
-                            </div>
-                            <div class="fault-row">
-                                <div class="fault-col">CYJ28-4.5-50HQ</div>
-                                <div class="fault-col">超负荷运行</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- 实时检测页面：完整嵌入振动频率监测 (2.html 整合) -->
-            <div class="page-content" id="page2">
-                <div class="vibration-container">
-                    <!-- 头部状态栏（移植自2.html） -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h1 style="font-size: 24px; color: #06b6d4; margin:0;"><i class="fas fa-wave-square"></i> 抽油机振动频率实时监测</h1>
-                        <div class="status">
-                            <span class="status-dot disconnected" id="statusDot"></span>
-                            <span id="statusText">连接中...</span>
-                        </div>
-                    </div>
+    <script>
+        (function() {
+            // ---------- 登录逻辑 ----------
+            const loginOverlay = document.getElementById('loginOverlay');
+            const mainPlatform = document.getElementById('mainPlatform');
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorTip = document.getElementById('errorTip');
+            const displayUsernameSpan = document.getElementById('displayUsername');
 
-                    <!-- 4个指标卡片 -->
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            <div class="card-value" id="freqVal">--</div>
-                            <div class="card-label">振动频率 (Hz)</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
-                            <div class="card-value" id="statusVal">--</div>
-                            <div class="card-label">运行状态</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-                            <div class="card-value" id="countVal">0</div>
-                            <div class="card-label">累计数据条数</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon"><i class="fas fa-clock"></i></div>
-                            <div class="card-value" id="timeVal">--</div>
-                            <div class="card-label">最后更新时间</div>
-                        </div>
-                    </div>
-
-                    <!-- 图表和历史区域 -->
-                    <div class="main-row">
-                        <div class="chart-panel">
-                            <div class="panel-title"><i class="fas fa-chart-area"></i> 振动频率趋势</div>
-                            <div id="chart" style="width:100%; height:100%;"></div>
-                        </div>
-                        <div class="list-panel">
-                            <div class="panel-title"><i class="fas fa-list"></i> 历史记录</div>
-                            <div id="dataList"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 其他页面占位 -->
-            <div class="page-content" id="page3">
-                <div class="simple-page">设备管理页面 (3)</div>
-            </div>
-            <div class="page-content" id="page4">
-                <div class="simple-page">故障诊断页面 (4)</div>
-            </div>
-            <div class="page-content" id="page5">
-                <div class="simple-page">你好 (页面5)</div>
-            </div>
-            <div class="page-content" id="page6">
-                <div class="simple-page">你好 (页面6)</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    (function() {
-        // ----- 顶部下拉菜单逻辑 -----
-        const trigger = document.getElementById('menuTrigger');
-        const dropdown = document.getElementById('dropdownMenu');
-        const chevron = document.getElementById('chevronIcon');
-
-        function toggleMenu(e) {
-            e.stopPropagation();
-            dropdown.classList.toggle('show');
-            trigger.classList.toggle('open');
-            chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
-        trigger.addEventListener('click', toggleMenu);
-        document.addEventListener('click', function(event) {
-            if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove('show');
-                trigger.classList.remove('open');
-                chevron.style.transform = 'rotate(0deg)';
+            // 简单验证（用户名admin，密码123456）
+            function validateLogin(username, password) {
+                return username === 'admin' && password === '123456';
             }
-        });
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', () => {
-                dropdown.classList.remove('show');
-                trigger.classList.remove('open');
-                chevron.style.transform = 'rotate(0deg)';
-            });
-        });
 
-        // ----- 左侧导航折叠 + 页面切换 -----
-        const coreFunctionNav = document.getElementById('coreFunctionNav');
-        const subNavContainer = document.getElementById('subNavContainer');
-        const subNavItems = document.querySelectorAll('.sub-nav-item');
-        const pageContents = document.querySelectorAll('.page-content');
-
-        function toggleSubNav() {
-            coreFunctionNav.classList.toggle('open');
-            coreFunctionNav.classList.toggle('active');
-            subNavContainer.classList.toggle('show');
-        }
-        function loadPage(pageNum) {
-            pageContents.forEach(page => page.classList.remove('active'));
-            const targetPage = document.getElementById(`page${pageNum}`);
-            if (targetPage) targetPage.classList.add('active');
-            subNavItems.forEach(item => item.classList.remove('active'));
-            const activeItem = document.querySelector(`.sub-nav-item[data-page="${pageNum}"]`);
-            if (activeItem) activeItem.classList.add('active');
-
-            // 如果切换到实时检测页面（page2），且图表已存在则触发resize，保证图表自适应
-            if (pageNum === '2' && window.vibrationChartInstance) {
-                setTimeout(() => {
-                    window.vibrationChartInstance.resize();
-                }, 100);
-            }
-        }
-
-        coreFunctionNav.addEventListener('click', toggleSubNav);
-        subNavItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const page = this.getAttribute('data-page');
-                loadPage(page);
-            });
-        });
-
-        // ----- 首页轮播图逻辑 (原有保留)-----
-        const leftBtn = document.getElementById('left');
-        const rightBtn = document.getElementById('right');
-        const dian = document.getElementById('dian');
-        const as = dian.getElementsByTagName('a');
-        const imgs = document.getElementById('img');
-        const l = as.length;
-        if (as.length) {
-            let p = as[0];
-            p.style.color = 'red';
-            for (let i = 0; i < as.length; i++) {
-                let a = as[i];
-                a.onclick = function() {
-                    for (let j = 0; j < as.length; j++) as[j].style.color = 'black';
-                    imgs.src = this.href;
-                    this.style.color = 'red';
+            function doLogin(username, password) {
+                if (!username) {
+                    errorTip.textContent = '请输入用户名';
                     return false;
-                };
+                }
+                if (!password) {
+                    errorTip.textContent = '请输入密码';
+                    return false;
+                }
+                if (!validateLogin(username, password)) {
+                    errorTip.textContent = '用户名或密码错误';
+                    return false;
+                }
+                // 登录成功
+                errorTip.textContent = '';
+                // 保存登录状态
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loggedUsername', username);
+                // 更新顶部用户名
+                displayUsernameSpan.textContent = username;
+                // 隐藏登录层，显示主平台
+                loginOverlay.classList.add('hide');
+                mainPlatform.classList.add('show');
+                // 触发图表自适应（防止因隐藏导致的尺寸问题）
+                setTimeout(() => {
+                    if (window.vibrationChartInstance) window.vibrationChartInstance.resize();
+                }, 200);
+                return true;
             }
-            leftBtn.onclick = function() {
-                for (let i = 0; i < l; i++) {
-                    let a = as[i];
-                    if (a.style.color === 'red') {
-                        let t = (i === 0) ? as[l-1] : as[i-1];
-                        imgs.src = t.href;
-                        t.style.color = 'red';
-                        a.style.color = 'black';
-                        break;
+
+            // 检查是否已登录
+            function checkLoginStatus() {
+                const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+                if (isLoggedIn === 'true') {
+                    const savedUsername = sessionStorage.getItem('loggedUsername') || '管理员';
+                    displayUsernameSpan.textContent = savedUsername;
+                    loginOverlay.classList.add('hide');
+                    mainPlatform.classList.add('show');
+                    return true;
+                }
+                return false;
+            }
+
+            // 退出登录
+            function logout() {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('loggedUsername');
+                loginOverlay.classList.remove('hide');
+                mainPlatform.classList.remove('show');
+                // 清空表单
+                if (usernameInput) usernameInput.value = '';
+                if (passwordInput) passwordInput.value = '';
+                if (errorTip) errorTip.textContent = '';
+            }
+
+            // 绑定登录表单事件
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const username = usernameInput.value.trim();
+                    const password = passwordInput.value.trim();
+                    doLogin(username, password);
+                });
+                // 输入时清除错误提示
+                usernameInput.addEventListener('focus', () => { errorTip.textContent = ''; });
+                passwordInput.addEventListener('focus', () => { errorTip.textContent = ''; });
+            }
+
+            // 绑定退出登录按钮（动态获取，因为下拉菜单可能后加载）
+            document.addEventListener('click', function(e) {
+                if (e.target.closest && e.target.closest('#logoutBtn')) {
+                    logout();
+                }
+            });
+
+            // 如果已经登录，直接显示平台；否则显示登录页
+            if (!checkLoginStatus()) {
+                loginOverlay.classList.remove('hide');
+                mainPlatform.classList.remove('show');
+            } else {
+                // 已登录，确保主平台正常初始化
+            }
+
+            // ---------- 以下为 zhu.html 原有的所有脚本（顶部下拉菜单、导航切换、轮播图、振动监测）----------
+            // 顶部下拉菜单逻辑
+            const trigger = document.getElementById('menuTrigger');
+            const dropdown = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('chevronIcon');
+            if (trigger && dropdown && chevron) {
+                function toggleMenu(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                    trigger.classList.toggle('open');
+                    chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+                trigger.addEventListener('click', toggleMenu);
+                document.addEventListener('click', function(event) {
+                    if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                        dropdown.classList.remove('show');
+                        trigger.classList.remove('open');
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                });
+                document.querySelectorAll('.dropdown-item:not(#logoutBtn)').forEach(item => {
+                    item.addEventListener('click', () => {
+                        dropdown.classList.remove('show');
+                        trigger.classList.remove('open');
+                        chevron.style.transform = 'rotate(0deg)';
+                    });
+                });
+            }
+
+            // 左侧导航折叠 + 页面切换
+            const coreFunctionNav = document.getElementById('coreFunctionNav');
+            const subNavContainer = document.getElementById('subNavContainer');
+            const subNavItems = document.querySelectorAll('.sub-nav-item');
+            const pageContents = document.querySelectorAll('.page-content');
+            function toggleSubNav() {
+                if (coreFunctionNav) {
+                    coreFunctionNav.classList.toggle('open');
+                    coreFunctionNav.classList.toggle('active');
+                }
+                if (subNavContainer) subNavContainer.classList.toggle('show');
+            }
+            function loadPage(pageNum) {
+                pageContents.forEach(page => page.classList.remove('active'));
+                const targetPage = document.getElementById(`page${pageNum}`);
+                if (targetPage) targetPage.classList.add('active');
+                subNavItems.forEach(item => item.classList.remove('active'));
+                const activeItem = document.querySelector(`.sub-nav-item[data-page="${pageNum}"]`);
+                if (activeItem) activeItem.classList.add('active');
+                if (pageNum === '2' && window.vibrationChartInstance) {
+                    setTimeout(() => window.vibrationChartInstance.resize(), 100);
+                }
+            }
+            if (coreFunctionNav) coreFunctionNav.addEventListener('click', toggleSubNav);
+            subNavItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const page = this.getAttribute('data-page');
+                    loadPage(page);
+                });
+            });
+
+            // 首页轮播图逻辑
+            const leftBtn = document.getElementById('left');
+            const rightBtn = document.getElementById('right');
+            const dianUl = document.getElementById('dian');
+            if (dianUl) {
+                const as = dianUl.getElementsByTagName('a');
+                const imgs = document.getElementById('img');
+                const l = as.length;
+                if (l > 0) {
+                    let p = as[0];
+                    p.style.color = 'red';
+                    for (let i = 0; i < l; i++) {
+                        let a = as[i];
+                        a.onclick = function() {
+                            for (let j = 0; j < l; j++) as[j].style.color = 'black';
+                            imgs.src = this.href;
+                            this.style.color = 'red';
+                            return false;
+                        };
+                    }
+                    if (leftBtn) {
+                        leftBtn.onclick = function() {
+                            for (let i = 0; i < l; i++) {
+                                let a = as[i];
+                                if (a.style.color === 'red') {
+                                    let t = (i === 0) ? as[l-1] : as[i-1];
+                                    imgs.src = t.href;
+                                    t.style.color = 'red';
+                                    a.style.color = 'black';
+                                    break;
+                                }
+                            }
+                        };
+                    }
+                    if (rightBtn) {
+                        rightBtn.onclick = function() {
+                            for (let i = 0; i < l; i++) {
+                                let a = as[i];
+                                if (a.style.color === 'red') {
+                                    let t = (i === l-1) ? as[0] : as[i+1];
+                                    imgs.src = t.href;
+                                    t.style.color = 'red';
+                                    a.style.color = 'black';
+                                    break;
+                                }
+                            }
+                        };
+                    }
+                    function autoPlay() {
+                        for (let i = 0; i < l; i++) {
+                            let a = as[i];
+                            if (a.style.color === 'red') {
+                                let t = (i === l-1) ? as[0] : as[i+1];
+                                imgs.src = t.href;
+                                t.style.color = 'red';
+                                a.style.color = 'black';
+                                break;
+                            }
+                        }
+                    }
+                    setInterval(autoPlay, 2000);
+                }
+            }
+
+            // 默认加载首页
+            loadPage('1');
+
+            // 振动频率实时监测模块
+            function initVibrationMonitor() {
+                const chartDom = document.getElementById('chart');
+                if (!chartDom) return;
+                if (window.vibrationChartInstance) window.vibrationChartInstance.dispose();
+                let chart = echarts.init(chartDom);
+                window.vibrationChartInstance = chart;
+                let freqHistory = [];
+                let dataCount = 0;
+                function getChartOption() {
+                    return {
+                        backgroundColor: 'transparent',
+                        grid: { left: 50, right: 30, top: 20, bottom: 30 },
+                        xAxis: { type: 'category', data: freqHistory.map((_, i) => (i+1).toString()), axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8', fontSize: 11 } },
+                        yAxis: { type: 'value', name: 'Hz', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } } },
+                        series: [{ type: 'line', data: freqHistory, smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { color: '#06b6d4', width: 2 }, itemStyle: { color: '#22d3ee' }, areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'rgba(6,182,212,0.3)'},{offset:1,color:'rgba(6,182,212,0.02)'}]) } }]
+                    };
+                }
+                chart.setOption(getChartOption());
+                function updateChart() { chart.setOption({ xAxis: { data: freqHistory.map((_, i) => (i+1).toString()) }, series: [{ data: freqHistory }] }); }
+                function parseMessage(msg) { const match = msg.match(/Freq:(\d+\.?\d*)Hz\s+(ACTIVE|IDLE)/); return match ? { freq: parseFloat(match[1]), status: match[2] } : null; }
+                function addDataPoint(freq, status) {
+                    freqHistory.push(freq);
+                    if (freqHistory.length > 30) freqHistory.shift();
+                    dataCount++;
+                    updateChart();
+                    const freqEl = document.getElementById('freqVal');
+                    const statusEl = document.getElementById('statusVal');
+                    const countEl = document.getElementById('countVal');
+                    const timeEl = document.getElementById('timeVal');
+                    if (freqEl) freqEl.textContent = freq.toFixed(1);
+                    if (statusEl) { statusEl.textContent = status; statusEl.style.color = status === 'ACTIVE' ? '#10b981' : '#64748b'; }
+                    if (countEl) countEl.textContent = dataCount;
+                    if (timeEl) timeEl.textContent = new Date().toLocaleTimeString();
+                    const listContainer = document.getElementById('dataList');
+                    if (listContainer) {
+                        const item = document.createElement('div');
+                        item.className = 'data-item ' + (status === 'ACTIVE' ? 'active' : 'idle');
+                        item.innerHTML = `<span><span class="data-time">${new Date().toLocaleTimeString()}</span>  ${freq.toFixed(1)} Hz</span><span class="data-val">${status}</span>`;
+                        listContainer.insertBefore(item, listContainer.firstChild);
+                        if (listContainer.children.length > 50) listContainer.removeChild(listContainer.lastChild);
                     }
                 }
-            };
-            rightBtn.onclick = function() {
-                for (let i = 0; i < l; i++) {
-                    let a = as[i];
-                    if (a.style.color === 'red') {
-                        let t = (i === l-1) ? as[0] : as[i+1];
-                        imgs.src = t.href;
-                        t.style.color = 'red';
-                        a.style.color = 'black';
-                        break;
-                    }
-                }
-            };
-            function autoPlay() {
-                for (let i = 0; i < l; i++) {
-                    let a = as[i];
-                    if (a.style.color === 'red') {
-                        let t = (i === l-1) ? as[0] : as[i+1];
-                        imgs.src = t.href;
-                        t.style.color = 'red';
-                        a.style.color = 'black';
-                        break;
-                    }
-                }
+                const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt', { clientId: 'web_' + Math.random().toString(16).substr(2, 8), keepalive: 60, clean: true });
+                client.on('connect', function () {
+                    const dot = document.getElementById('statusDot');
+                    const txt = document.getElementById('statusText');
+                    if (dot) dot.className = 'status-dot connected';
+                    if (txt) txt.textContent = '已连接 · broker.emqx.io';
+                    client.subscribe('elevator/vibration', { qos: 1 });
+                });
+                client.on('message', function (topic, message) { const parsed = parseMessage(message.toString()); if (parsed) addDataPoint(parsed.freq, parsed.status); });
+                client.on('error', function () { const txt = document.getElementById('statusText'); if (txt) txt.textContent = '连接失败，请刷新重试'; });
+                client.on('close', function () { const dot = document.getElementById('statusDot'); if (dot) dot.className = 'status-dot disconnected'; const txt = document.getElementById('statusText'); if (txt) txt.textContent = '已断开'; });
             }
-            setInterval(autoPlay, 2000);
-        }
-
-        // 加载默认首页
-        loadPage('1');
-
-        // ---------- 振动频率实时监测模块（2.html核心逻辑）----------
-        // 等待页面包含所需DOM元素后再初始化
-        function initVibrationMonitor() {
-            const chartDom = document.getElementById('chart');
-            if (!chartDom) return;
-            // 避免重复创建实例
-            if (window.vibrationChartInstance) {
-                window.vibrationChartInstance.dispose();
-            }
-            let chart = echarts.init(chartDom);
-            window.vibrationChartInstance = chart;
-            let freqHistory = [];
-            let dataCount = 0;
-
-            function getChartOption() {
-                return {
-                    backgroundColor: 'transparent',
-                    grid: { left: 50, right: 30, top: 20, bottom: 30 },
-                    xAxis: { type: 'category', data: freqHistory.map((_, i) => (i + 1).toString()), axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8', fontSize: 11 } },
-                    yAxis: { type: 'value', name: 'Hz', axisLine: { lineStyle: { color: '#475569' } }, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } } },
-                    series: [{
-                        type: 'line', data: freqHistory, smooth: true, symbol: 'circle', symbolSize: 6,
-                        lineStyle: { color: '#06b6d4', width: 2 },
-                        itemStyle: { color: '#22d3ee' },
-                        areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:'rgba(6,182,212,0.3)'},{offset:1,color:'rgba(6,182,212,0.02)'}]) }
-                    }]
-                };
-            }
-            chart.setOption(getChartOption());
-
-            function updateChart() {
-                chart.setOption({ xAxis: { data: freqHistory.map((_, i) => (i + 1).toString()) }, series: [{ data: freqHistory }] });
-            }
-
-            function parseMessage(msg) {
-                const match = msg.match(/Freq:(\d+\.?\d*)Hz\s+(ACTIVE|IDLE)/);
-                if (!match) return null;
-                return { freq: parseFloat(match[1]), status: match[2] };
-            }
-
-            function addDataPoint(freq, status) {
-                freqHistory.push(freq);
-                if (freqHistory.length > 30) freqHistory.shift();
-                dataCount++;
-                updateChart();
-
-                const freqEl = document.getElementById('freqVal');
-                const statusEl = document.getElementById('statusVal');
-                const countEl = document.getElementById('countVal');
-                const timeEl = document.getElementById('timeVal');
-                if (freqEl) freqEl.textContent = freq.toFixed(1);
-                if (statusEl) {
-                    statusEl.textContent = status;
-                    statusEl.style.color = status === 'ACTIVE' ? '#10b981' : '#64748b';
-                }
-                if (countEl) countEl.textContent = dataCount;
-                if (timeEl) timeEl.textContent = new Date().toLocaleTimeString();
-
-                const listContainer = document.getElementById('dataList');
-                if (listContainer) {
-                    const item = document.createElement('div');
-                    item.className = 'data-item ' + (status === 'ACTIVE' ? 'active' : 'idle');
-                    item.innerHTML = `<span><span class="data-time">${new Date().toLocaleTimeString()}</span>  ${freq.toFixed(1)} Hz</span><span class="data-val">${status}</span>`;
-                    listContainer.insertBefore(item, listContainer.firstChild);
-                    if (listContainer.children.length > 50) listContainer.removeChild(listContainer.lastChild);
-                }
-            }
-
-            // MQTT 连接 (EMQX 公共 broker)
-            const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt', {
-                clientId: 'web_' + Math.random().toString(16).substr(2, 8),
-                keepalive: 60,
-                clean: true
-            });
-            client.on('connect', function () {
-                const dot = document.getElementById('statusDot');
-                const txt = document.getElementById('statusText');
-                if (dot) dot.className = 'status-dot connected';
-                if (txt) txt.textContent = '已连接 · broker.emqx.io';
-                client.subscribe('elevator/vibration', { qos: 1 });
-            });
-            client.on('message', function (topic, message) {
-                const parsed = parseMessage(message.toString());
-                if (parsed) addDataPoint(parsed.freq, parsed.status);
-            });
-            client.on('error', function () {
-                const txt = document.getElementById('statusText');
-                if (txt) txt.textContent = '连接失败，请刷新重试';
-            });
-            client.on('close', function () {
-                const dot = document.getElementById('statusDot');
-                if (dot) dot.className = 'status-dot disconnected';
-                const txt = document.getElementById('statusText');
-                if (txt) txt.textContent = '已断开';
-            });
-        }
-
-        // 延迟初始化，确保DOM完全加载
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initVibrationMonitor);
-        } else {
-            initVibrationMonitor();
-        }
-        // 监听窗口resize时调整图表尺寸
-        window.addEventListener('resize', function() {
-            if (window.vibrationChartInstance) {
-                window.vibrationChartInstance.resize();
-            }
-        });
-    })();
-</script>
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initVibrationMonitor);
+            else initVibrationMonitor();
+            window.addEventListener('resize', function() { if (window.vibrationChartInstance) window.vibrationChartInstance.resize(); });
+        })();
+    </script>
 </body>
 </html>
