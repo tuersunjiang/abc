@@ -834,6 +834,8 @@
                         <div class="sub-nav-item" data-page="2">实时检测</div>
                         <div class="sub-nav-item" data-page="3">设备管理</div>
                         <div class="sub-nav-item" data-page="4">故障诊断</div>
+                        <div class="sub-nav-item" data-page="5">页面5</div>
+                        <div class="sub-nav-item" data-page="6">页面6</div>
                     </div>
                     <div style="flex:1"></div>
                     <div class="nav-item" style="border-top: 1px solid #334155;">
@@ -908,8 +910,6 @@
                     <!-- 其他页面占位 -->
                     <div class="page-content" id="page3"><div class="simple-page">设备管理页面 (3)</div></div>
                     <div class="page-content" id="page4"><div class="simple-page">故障诊断页面 (4)</div></div>
-                    <div class="page-content" id="page5"><div class="simple-page">你好 (页面5)</div></div>
-                    <div class="page-content" id="page6"><div class="simple-page">你好 (页面6)</div></div>
                 </div>
             </div>
         </div>
@@ -1107,7 +1107,7 @@
 
             loadPage('1');
 
-            // ---------- 振动频率实时监测（修复 MQTT 连接）----------
+            // ---------- 振动频率实时监测（MQTT 连接超时改为 2 分钟）----------
             function initVibrationMonitor() {
                 const chartDom = document.getElementById('chart');
                 if (!chartDom) return;
@@ -1152,22 +1152,22 @@
                     }
                 }
 
-                // 修复：使用 WSS 加密连接，避免 file:// 或混合内容限制
+                // 使用 WSS 加密连接
                 const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
                     clientId: 'web_' + Math.random().toString(16).substr(2, 8),
                     keepalive: 60,
                     clean: true,
                     reconnectPeriod: 3000,
-                    connectTimeout: 10000
+                    connectTimeout: 120000   // 连接超时设为 2 分钟（120000 毫秒）
                 });
 
-                // 连接超时检测（10秒后若未连接则提示）
+                // 连接超时检测（2分钟后若未连接则提示）
                 let connectTimer = setTimeout(() => {
                     if (client && client.connected !== true) {
                         const txt = document.getElementById('statusText');
                         if (txt) txt.textContent = '连接超时，请刷新重试';
                     }
-                }, 10000);
+                }, 120000);  // 从 10000 改为 120000（2分钟）
 
                 client.on('connect', function () {
                     clearTimeout(connectTimer);
