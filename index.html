@@ -22,19 +22,34 @@
             background-color: #0f172a;
         }
 
-        /* ---------- 登录页面样式 (移植自 deng.css，适配当前结构) ---------- */
+        /* ---------- 登录页面样式 (含背景图片) ---------- */
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background-image: url('/abc/01.img');  /* 原登录页背景图片 */
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             transition: opacity 0.3s ease;
+        }
+        /* 半透明遮罩层，使卡片更突出（可选） */
+        .login-overlay::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: -1;
         }
         .login-overlay.hide {
             display: none;
@@ -42,11 +57,11 @@
         .login-card {
             width: 400px;
             background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
             border-radius: 16px;
             padding: 40px 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             border: 1px solid #334155;
+            backdrop-filter: blur(4px);
         }
         .login-logo {
             text-align: center;
@@ -143,7 +158,7 @@
             display: flex;
         }
 
-        /* 主平台内部样式（原 zhu.html 所有样式完全保留） */
+        /* 以下为原 zhu.html 所有样式（完全保留） */
         .one {
             width: 100vw;
             height: 100vh;
@@ -905,7 +920,7 @@
 
     <script>
         (function() {
-            // ---------- 登录逻辑 ----------
+            // ---------- 登录逻辑（任何非空用户名密码均可登录）----------
             const loginOverlay = document.getElementById('loginOverlay');
             const mainPlatform = document.getElementById('mainPlatform');
             const loginForm = document.getElementById('loginForm');
@@ -914,35 +929,27 @@
             const errorTip = document.getElementById('errorTip');
             const displayUsernameSpan = document.getElementById('displayUsername');
 
-            // 简单验证（用户名admin，密码123456）
-            function validateLogin(username, password) {
-                return username === 'admin' && password === '123456';
-            }
-
+            // 登录验证：只要用户名和密码都不为空，即可登录（无默认账号密码限制）
             function doLogin(username, password) {
-                if (!username) {
+                if (!username.trim()) {
                     errorTip.textContent = '请输入用户名';
                     return false;
                 }
-                if (!password) {
+                if (!password.trim()) {
                     errorTip.textContent = '请输入密码';
                     return false;
                 }
-                if (!validateLogin(username, password)) {
-                    errorTip.textContent = '用户名或密码错误';
-                    return false;
-                }
-                // 登录成功
+                // 任何非空都允许登录
                 errorTip.textContent = '';
                 // 保存登录状态
                 sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('loggedUsername', username);
+                sessionStorage.setItem('loggedUsername', username.trim());
                 // 更新顶部用户名
-                displayUsernameSpan.textContent = username;
+                displayUsernameSpan.textContent = username.trim();
                 // 隐藏登录层，显示主平台
                 loginOverlay.classList.add('hide');
                 mainPlatform.classList.add('show');
-                // 触发图表自适应（防止因隐藏导致的尺寸问题）
+                // 触发图表自适应
                 setTimeout(() => {
                     if (window.vibrationChartInstance) window.vibrationChartInstance.resize();
                 }, 200);
@@ -953,7 +960,7 @@
             function checkLoginStatus() {
                 const isLoggedIn = sessionStorage.getItem('isLoggedIn');
                 if (isLoggedIn === 'true') {
-                    const savedUsername = sessionStorage.getItem('loggedUsername') || '管理员';
+                    const savedUsername = sessionStorage.getItem('loggedUsername') || '用户';
                     displayUsernameSpan.textContent = savedUsername;
                     loginOverlay.classList.add('hide');
                     mainPlatform.classList.add('show');
@@ -978,8 +985,8 @@
             if (loginForm) {
                 loginForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    const username = usernameInput.value.trim();
-                    const password = passwordInput.value.trim();
+                    const username = usernameInput.value;
+                    const password = passwordInput.value;
                     doLogin(username, password);
                 });
                 // 输入时清除错误提示
@@ -987,7 +994,7 @@
                 passwordInput.addEventListener('focus', () => { errorTip.textContent = ''; });
             }
 
-            // 绑定退出登录按钮（动态获取，因为下拉菜单可能后加载）
+            // 绑定退出登录按钮
             document.addEventListener('click', function(e) {
                 if (e.target.closest && e.target.closest('#logoutBtn')) {
                     logout();
@@ -998,12 +1005,9 @@
             if (!checkLoginStatus()) {
                 loginOverlay.classList.remove('hide');
                 mainPlatform.classList.remove('show');
-            } else {
-                // 已登录，确保主平台正常初始化
             }
 
-            // ---------- 以下为 zhu.html 原有的所有脚本（顶部下拉菜单、导航切换、轮播图、振动监测）----------
-            // 顶部下拉菜单逻辑
+            // ---------- 以下为原 zhu.html 所有脚本（顶部菜单、导航、轮播、振动监测）----------
             const trigger = document.getElementById('menuTrigger');
             const dropdown = document.getElementById('dropdownMenu');
             const chevron = document.getElementById('chevronIcon');
@@ -1031,7 +1035,6 @@
                 });
             }
 
-            // 左侧导航折叠 + 页面切换
             const coreFunctionNav = document.getElementById('coreFunctionNav');
             const subNavContainer = document.getElementById('subNavContainer');
             const subNavItems = document.querySelectorAll('.sub-nav-item');
@@ -1063,7 +1066,6 @@
                 });
             });
 
-            // 首页轮播图逻辑
             const leftBtn = document.getElementById('left');
             const rightBtn = document.getElementById('right');
             const dianUl = document.getElementById('dian');
@@ -1127,10 +1129,8 @@
                 }
             }
 
-            // 默认加载首页
             loadPage('1');
 
-            // 振动频率实时监测模块
             function initVibrationMonitor() {
                 const chartDom = document.getElementById('chart');
                 if (!chartDom) return;
